@@ -56,7 +56,7 @@ class Bee2Agent(Agent):
         result = []
         if keys != index:
             result += [self.utils.reg_read(reg) for reg in keys]
-            # Keep hexlification of registers separate to preserve time coupling
+            # Keep hexlification of registers separate; preserve time coupling
             result = [b2a_hex(r) for r in result]
         else:
             result += self.utils.build_file_list()
@@ -93,8 +93,8 @@ class Bee2Agent(Agent):
         #!!! What happens with an empty list
         if keys[0] and values[0] and len(keys) == len(values):
             # This looks a bit dumb but it relies on integer rounding
-            # in the division, so in this case (n/8)*8 != n for all n
-            values = [zfill(str(value), 8*((len(value)+7)/8))
+            # in the division, so in this case (n/8)*8 != n for some n
+            values = [a2b_hex(zfill(str(value), 8*((len(value)+7)/8)))
                       for value in values]
             result += [self.utils.reg_write(reg, data)
                        for reg, data in zip(keys, values)]
