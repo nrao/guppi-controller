@@ -40,7 +40,7 @@ class Controller(Agent):
     # Script to convert from the xilinx register representation to a
     # 'real' number. Only meaningful for fixed point numbers.
     # (int values are already human readable)
-    def xstr2int(self, xstr, frac_bits=0, sign_bit=None, radix=16):
+    def xstr2float(self, xstr, frac_bits=0, sign_bit=None, radix=16):
         """Converts a numeric string from xilinx fixed point to floating point.
 
         'xstr' is expected to be a hex string, but can be any base as long
@@ -65,11 +65,11 @@ class Controller(Agent):
                 upper += 1.0/2**count
         return upper
 
-    def int2xstr(self, num, frac_bits=0, sign_bit=None):
+    def float2xstr(self, num, frac_bits=0, sign_bit=None):
         """Converts a floating point number to a xilinx fixed point hex string.
 
         'num' can be either an integer or a string, positive or negative.
-        Unlike xstr2int, this function does not (currently) allow a radix
+        Unlike xstr2float, this function does not (currently) allow a radix
         to be specified but instead always converts from base ten to hex.
         """
         count = 0
@@ -94,7 +94,7 @@ class Controller(Agent):
             sign_mask = 1 << (sign_bit-1)
             upper = upper | sign_mask
         upper = hex(upper)
-        # Python 2.4+ hack (appends negative sign)
+        # Python 2.4+ hack (hex() appends negative sign)
         if upper[0] == '-':
             upper = upper[1:]
         return upper[2:]

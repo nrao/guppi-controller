@@ -154,8 +154,8 @@ completer = Completer()
 # Register "command-line" functions.
 set = cicada.set
 arm = cicada.arm
-int2xstr = cicada.int2xstr
-xstr2int = cicada.xstr2int
+float2xstr = cicada.float2xstr
+xstr2float = cicada.xstr2float
 
 def get(keys = index):
     if isinstance(keys, str):

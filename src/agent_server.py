@@ -72,13 +72,13 @@ class AgentServer(SimpleWSGISoapApp):
     def arm(self):
         return self.agent.arm()
 
-    @soapmethod(String, Integer, _returns=Float)
-    def xstr2int(self, xstr, frac_bits):
-        return self.agent.xstr2int(xstr, frac_bits)
+    @soapmethod(String, Integer, Integer, _returns=Float)
+    def xstr2float(self, xstr, frac_bits, sign_bit):
+        return self.agent.xstr2float(xstr, frac_bits, sign_bit)
 
-    @soapmethod(Float, Integer, _returns=String)
-    def int2xstr(self, num, frac_bits):
-        return self.agent.int2xstr(num, frac_bits)
+    @soapmethod(Float, Integer, Integer, _returns=String)
+    def float2xstr(self, num, frac_bits, sign_bit):
+        return self.agent.float2xstr(num, frac_bits, sign_bit)
 
     # Don't use underscores in method names, gsoap doesn't like them
     @soapmethod(String, _returns=Array(String))
