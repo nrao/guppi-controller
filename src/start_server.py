@@ -31,7 +31,7 @@ server = AgentServer(AgentClass)
 
 try:
     server.start()
-    http_server = CherryPyWSGIServer(('0.0.0.0', 8000), server, numthreads = 1)
+    http_server = CherryPyWSGIServer(('0.0.0.0', 9090), server, numthreads = 1)
     http_server.start()
 except KeyboardInterrupt:
     http_server.stop()

@@ -21,8 +21,8 @@ from soaplib.client import make_service_client
 from agent import index
 from agent_server import AgentServer
 
-def AgentClient(agent_class = None, host = 'localhost'):
-    return make_service_client('http://%s:8915' % host,
+def AgentClient(agent_class = None, host = 'localhost', port = 9090):
+    return make_service_client('http://%s:%d' % (host, port),
                                AgentServer(agent_class))
 
 def _test():

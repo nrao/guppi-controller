@@ -24,7 +24,8 @@ from bee2_agent import Bee2Agent
 
 class Demux(Agent):
     def __init__(self):
-        self.clients = {'BEE2': AgentClient(Bee2Agent, host = 'bee2')}
+        self.clients = {'BEE2': AgentClient(Bee2Agent, host = 'bee2',
+                                            port = 8915)}
 
     def get(self, keys = index):
         """Get all values of parameters matching keys in keys list.
