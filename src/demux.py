@@ -102,6 +102,11 @@ class Demux(Agent):
         keys -- sequence of names of parameters to set
         values -- sequence of values of parameters to set
         """
+        # Tweak values.
+        value_convert = {'None': ''
+                         , 'NULL': None}
+        values = [value_convert.get(value, value) for value in values]
+
         # HACK:
         # try out combining BEE2 and DAQ calls
         # keep subsequent get calls to 1 call to BEE2 and 1 to DAQ
