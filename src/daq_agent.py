@@ -45,4 +45,15 @@ class DaqAgent(Agent):
         self.status.write()
         return result
 
+    def load(self, keys = index):
+        print "To do: Start guppi_daq instance here (making sure not to" +\
+              " have too many running)."
+        pass
+        return failure
+
+    def unload(self, keys = index):
+        print "To do: Stop guppi_daq instance here, PID given by shared mem."
+        pass
+        return failure
+
 AgentClass = DaqAgent

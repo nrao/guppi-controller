@@ -104,7 +104,8 @@ class Demux(Agent):
         """
         # Tweak values.
         value_convert = {'None': ''
-                         , 'NULL': None}
+                         , 'NULL': None
+                         , index[0] : ''}
         values = [value_convert.get(value, value) for value in values]
 
         # HACK:
@@ -176,8 +177,48 @@ class Demux(Agent):
         """
         if keys == index:
             return ['BEE2/' + key for key in self.clients['BEE2'].load(keys)]
-        keys = [key.replace('BEE2/', '') for key in keys]
-        return self.clients['BEE2'].load(keys)
+        # keys = [key.replace('BEE2/', '') for key in keys]
+        # return self.clients['BEE2'].load(keys)
+
+        # HACK:
+        # try out combining BEE2 and DAQ calls
+        # keep subsequent get calls to 1 call to BEE2 and 1 to DAQ
+
+        # build key order
+        client_keys = {'BEE2': [],
+                       'DAQ': [],
+                       '': []}
+        key_order = []
+        for key in keys:
+            if re.match('^BEE2\/', key):
+                key_order.append('BEE2')
+                client_keys['BEE2'].append(key)
+            elif re.match('^DAQ$', key):
+                key_order.append('DAQ')
+                client_keys['DAQ'].append(key)
+            else:
+                key_order.append('')
+                client_keys[''].append(key)
+
+        bee2_keys = [key.replace('BEE2/', '') for key in client_keys['BEE2']]
+        bee2_values = self.clients['BEE2'].load(bee2_keys)
+        daq_keys = index
+        daq_values = []
+        if client_keys['DAQ']:
+            daq_values = self.clients['DAQ'].load(daq_keys)
+        daq_values = [daq_values[0] for i in range(len(client_keys['DAQ']))]
+        none_keys = client_keys['']
+        none_values = ['KeyError' for i in range(len(none_keys))]
+
+        # build result
+        client_values = {'BEE2': bee2_values,
+                         'DAQ': daq_values,
+                         '': none_values}
+
+        result = []
+        for key in key_order:
+            result.append(client_values[key].pop(0))
+        return result
 
     def unload(self, keys = index):
         """Unload profiles with names which match given keys list.
@@ -190,8 +231,48 @@ class Demux(Agent):
         """
         if keys == index:
             return ['BEE2/' + key for key in self.clients['BEE2'].unload(keys)]
-        keys = [key.replace('BEE2/', '') for key in keys]
-        return self.clients['BEE2'].unload(keys)
+        # keys = [key.replace('BEE2/', '') for key in keys]
+        # return self.clients['BEE2'].unload(keys)
+
+        # HACK:
+        # try out combining BEE2 and DAQ calls
+        # keep subsequent get calls to 1 call to BEE2 and 1 to DAQ
+
+        # build key order
+        client_keys = {'BEE2': [],
+                       'DAQ': [],
+                       '': []}
+        key_order = []
+        for key in keys:
+            if re.match('^BEE2\/', key):
+                key_order.append('BEE2')
+                client_keys['BEE2'].append(key)
+            elif re.match('^DAQ$', key):
+                key_order.append('DAQ')
+                client_keys['DAQ'].append(key)
+            else:
+                key_order.append('')
+                client_keys[''].append(key)
+
+        bee2_keys = [key.replace('BEE2/', '') for key in client_keys['BEE2']]
+        bee2_values = self.clients['BEE2'].unload(bee2_keys)
+        daq_keys = index
+        daq_values = []
+        if client_keys['DAQ']:
+            daq_values = self.clients['DAQ'].unload(daq_keys)
+        daq_values = [daq_values[0] for i in range(len(client_keys['DAQ']))]
+        none_keys = client_keys['']
+        none_values = ['KeyError' for i in range(len(none_keys))]
+
+        # build result
+        client_values = {'BEE2': bee2_values,
+                         'DAQ': daq_values,
+                         '': none_values}
+
+        result = []
+        for key in key_order:
+            result.append(client_values[key].pop(0))
+        return result
 
     def profiles(self, keys = index):
         """Provide information on profiles, either given or found.
