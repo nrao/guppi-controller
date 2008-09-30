@@ -19,7 +19,6 @@ __license__ = "GPL"
 from agent import Agent, index, success, failure
 from guppi_utils import guppi_status
 
-# code simple daq client until interaction with daq is better understood.
 class DaqAgent(Agent):
     def __init__(self):
         self.status = guppi_status()
@@ -28,18 +27,22 @@ class DaqAgent(Agent):
         if keys == index:
             return self.status.keys()
 
-        return [self.status[key] for key in keys]
+        return [str(self.status[key]) for key in keys]
 
     def set(self, keys, values):
-        # IMPORTANT: need to handle types; current interface assumes type
         result = []
         for i in range(len(keys)):
+            key = keys[i]
+            value = values[i]
+            value = type(self.status[key])(value)
             try:
-                self.status.update(keys[i], values[i])
+                self.status.update(key, value)
             except:
                 result += failure
             else:
                 result += success
+        # commit updates
+        self.status.write()
         return result
 
 AgentClass = DaqAgent
