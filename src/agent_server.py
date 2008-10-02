@@ -63,11 +63,6 @@ class AgentServer(SimpleWSGISoapApp):
         return self.agent.parameters(keys)
 
     # To do: clean out non-pure methods, inherit in ControllerServer subclass?
-
-    @soapmethod(String, _returns=String)
-    def hello(self, name):
-        return 'Hello, ' + name + '!'
-
     @soapmethod(_returns=Array(String))
     def arm(self):
         return self.agent.arm()
@@ -79,12 +74,3 @@ class AgentServer(SimpleWSGISoapApp):
     @soapmethod(Float, Integer, Integer, _returns=String)
     def float2xstr(self, num, frac_bits, sign_bit):
         return self.agent.float2xstr(num, frac_bits, sign_bit)
-
-    # Don't use underscores in method names, gsoap doesn't like them
-    @soapmethod(String, _returns=Array(String))
-    def listme(self, keys):
-        return [i for i in keys]
-
-    @soapmethod(Array(String), _returns=String)
-    def stringme(self, keys):
-        return ''.join(keys)
