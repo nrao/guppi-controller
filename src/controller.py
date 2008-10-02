@@ -100,10 +100,10 @@ class Controller(Agent):
         return upper[2:]
 
     def arm(self):
-        set_result = self.set('BEE2/FPGA2/GUPPi_PIPES_ARM', '1')
+        set_result = self.set(['BEE2/FPGA2/GUPPi_PIPES_ARM'], ['1'])
         time.sleep(1)
-        clr_result = self.set('BEE2/FPGA2/GUPPi_PIPES_ARM', '0')
-        result = set_result[0] == 'True' and clr_result[0] == 'True'
+        clr_result = self.set(['BEE2/FPGA2/GUPPi_PIPES_ARM'], ['0'])
+        result = set_result == success and clr_result == success
         return (str(result),)
 
 AgentClass = Controller
