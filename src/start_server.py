@@ -22,6 +22,9 @@ import sys
 
 from agent_server import AgentServer
 
+# set special PYTHONPATH values
+sys.path.append('/home/sandboxes/cicada/guppi_daq/python')
+
 agent_module = 'agent_sim'
 if len(sys.argv) > 1:
     agent_module = sys.argv[1]
