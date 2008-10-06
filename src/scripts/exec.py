@@ -1,7 +1,7 @@
 # list script files in this directory to execute, in target order
 # order counts!  make sure dependecies are met!
 
-lineup = ['placeholder'
+lineup = ['utils.py'
           # , 'one.py'
           # , 'two.py'
           ]
