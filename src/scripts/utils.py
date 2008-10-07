@@ -2,6 +2,37 @@ from binascii import hexlify
 import numpy
 
 
+def generate_mask(n):
+    """Generates a bitmask of all 1s of the specified length."""
+    return int('1'*n if n>0 else '0', 2)
+
+
+def xstr2int(xstr, frac_bits=0, sign_bit=None, radix=16):
+    """Converts a numeric string from xilinx fixed point to floating point.
+    
+    'xstr' is expected to be a hex string, but can be any base as long
+    as the proper radix is provided. All xstr values must be in string
+    format, however.
+    """
+    count = 0
+    temp_fb = int(frac_bits)
+    mask = generate_mask(temp_fb)
+    upper = int(xstr, int(radix)) >> temp_fb
+    lower = int(xstr, int(radix)) & mask
+    #Account for a sign if present
+    if sign_bit:
+        temp_sb = int(sign_bit)-frac_bits-1
+        sign_mask = 1 << temp_sb
+        sign = sign_mask & upper
+        upper = (upper & generate_mask(temp_sb)) - sign
+    for i in range(0, temp_fb):
+        temp_fb -= 1
+        count += 1
+        if (lower >> temp_fb) & 1:
+            upper += 1.0/2**count
+    return upper
+
+
 def verbose_set(key, value):
     """Performs a set operation with formatted output."""
     print 'set', key, 'to', value, '...', set(key, value)
@@ -37,6 +68,18 @@ def init():
     verbose_set(['BEE2/FPGA3/SAMP_CMD'], ['00000000'])
     verbose_set(['BEE2/FPGA3/DC_SAMP_EN'], ['00000001'])
     verbose_set(['BEE2/FPGA3/DC_BINS_EN'], ['00000001'])
+
+
+def snapshot_bins(brams, limit = 512):
+    bins = []
+    count = 0
+    while count < limit:
+        bins.append(brams[0][count])
+        bins.append(brams[1][count])
+        bins.append(brams[2][count])
+        bins.append(brams[3][count])
+        count += 1
+    return bins
 
 
 def unbram(bram, value_nibbles=2):
@@ -78,6 +121,16 @@ def get_adc_samples(fpga=1, signed=True):
     return vals
 
 
+def print_reg():
+    """Prints all registers and their current values.  Excludes BRAMs."""
+    keys = [k for k in get()
+            if not k.startswith('DAQ')]
+    for k in keys:
+        v = get(k)
+        if 0 < len(v) < 32:
+            print k, '\t', v
+
+
 try:
     import math
     import pylab
@@ -86,6 +139,23 @@ except:
 else:
     print 'Plotting functions added successfully.'
 
+
+    def plot(values, frac_bits = 0, sign_bit = None):
+        toplot = []
+        for v in values:
+            toplot.append(xstr2int(v, frac_bits, sign_bit))
+        print
+        print 'plotting ...'
+        print 'x\ty'
+        print '----------'
+        for i in range(len(toplot)):
+            if toplot[i] != 0:
+                print i, '\t', toplot[i]
+        print '----------'
+        pylab.plot(toplot)
+        pylab.show()
+
+        
     def plot_adc_hist(ngrab=1):
         d1 = numpy.ndarray(0, dtype=numpy.int8)
         d3 = numpy.ndarray(0, dtype=numpy.int8)
@@ -109,3 +179,39 @@ else:
         pylab.plot(x[1:]-0.5, h3, label='FPGA3')
         pylab.legend()
         pylab.show()
+
+
+    def plot_iquv(iquv = 'IQUV'):
+        """Plot the requested spectra.
+
+        Keyword arguments:
+        iquv -- one or more of 'I', 'Q', 'U', 'V' stokes parameters to plot;
+                must be in alphabetic order.
+        """
+        bins = {}
+        zeroes = []
+        length = 0
+        iquv = iquv.upper()
+        reg_name = 'BEE2/FPGA2/vacc_subsys_%s_%s_%s_BRAM'
+        for char in iquv:
+            S_0, S_1, S_2, S_3 = (
+                unbram(get([reg_name % (char, char, 0)]), 8),
+                unbram(get([reg_name % (char, char, 1)]), 8),
+                unbram(get([reg_name % (char, char, 2)]), 8),
+                unbram(get([reg_name % (char, char, 3)]), 8)
+                )
+            bins[char] = snapshot_bins((S_0, S_1, S_2, S_3))
+            length = len(bins[char])
+
+        if length != 0:
+            zeroes = ['0'*8 for i in xrange(length)]
+
+        if 'I' in iquv:
+            plot(bins.get('I', zeroes) + zeroes + zeroes + zeroes, 16, 32)
+        if 'Q' in iquv:
+            plot(zeroes + bins.get('Q', zeroes) + zeroes + zeroes, 16, 32)
+        if 'U' in iquv:
+            plot(zeroes + zeroes + bins.get('U', zeroes) + zeroes, 16, 32)
+        if 'V' in iquv:
+            plot(zeroes + zeroes + zeroes + bins.get('V', zeroes), 16, 32)
+            
