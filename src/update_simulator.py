@@ -44,10 +44,13 @@ print '###################################################################'
 
 print 'parameters = {'
 for k,v in packed:
-    if len(v) > 8:
-        print ", '%s': '%s'" % (k, v[:32])
-    else:
-        print ", '%s': '%s'" % (k, v[:8])
+    try:
+        if len(v) > 8:
+            print ", '%s': '%s'" % (k, v[:32])
+        else:
+            print ", '%s': '%s'" % (k, v[:8])
+    except TypeError:
+        print ", '%s': '%s'" % (k, str(v))
 print '}'
 print
 dot_stderr()

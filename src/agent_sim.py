@@ -58,11 +58,13 @@ class AgentSim(Agent):
 
         result = []
         for i in range(len(keys)):
-            if self.parameters_sim.has_key(keys[i]):
+            key = keys[i]
+            if self.parameters_sim.has_key(key):
                 new_value = values[i]
-                for j in range(8 - len(new_value)):
-                    new_value = '0' + new_value
-                self.parameters_sim[keys[i]] = new_value
+                if re.search('^BEE2', key):
+                    for j in range(8 - len(new_value)):
+                        new_value = '0' + new_value
+                self.parameters_sim[key] = new_value
                 result += success
             else:
                 result += failure
