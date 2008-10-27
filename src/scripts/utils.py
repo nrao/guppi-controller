@@ -1,11 +1,9 @@
 from binascii import hexlify
 import numpy
 
-
 def generate_mask(n):
     """Generates a bitmask of all 1s of the specified length."""
     return int('1'*n if n>0 else '0', 2)
-
 
 def xstr2int(xstr, frac_bits=0, sign_bit=None, radix=16):
     """Converts a numeric string from xilinx fixed point to floating point.
@@ -32,11 +30,9 @@ def xstr2int(xstr, frac_bits=0, sign_bit=None, radix=16):
             upper += 1.0/2**count
     return upper
 
-
 def verbose_set(key, value):
     """Performs a set operation with formatted output."""
     print 'set', key, 'to', value, '...', set(key, value)
-
     
 def init():
     """Initializes registers to their default values."""
@@ -69,7 +65,6 @@ def init():
     verbose_set(['BEE2/FPGA3/DC_SAMP_EN'], ['00000001'])
     verbose_set(['BEE2/FPGA3/DC_BINS_EN'], ['00000001'])
 
-
 def snapshot_bins(brams, limit = 512):
     bins = []
     count = 0
@@ -81,26 +76,18 @@ def snapshot_bins(brams, limit = 512):
         count += 1
     return bins
 
-
-def unbram(bram, value_nibbles=2):
+def unbram(bram, value_nibbles = 2):
     """Breaks each bram word into the specified number of nibbles.
-
     Most GUPPI bram values are four 8-bit values concatenated.
 
     Keyword arguments:
-    bram -- sequence of bram values to separate
+    bram -- string of bram values to separate
     value_nibbles -- size of resulting values in nibbles
     """
     result = []
-    for word in bram:
-        temp = word
-        while len(temp) > value_nibbles:
-            head = temp[0:value_nibbles]
-            result += [head]
-            temp = temp[value_nibbles:]
-        result += [temp]
+    for i in range(0, len(bram), value_nibbles):
+        result += [bram[i:i+value_nibbles]]
     return result
-
 
 def get_adc_samples(fpga=1, signed=True):
     """Retrieve raw ADC samples from the specified signal path.
@@ -120,7 +107,6 @@ def get_adc_samples(fpga=1, signed=True):
         vals = numpy.uint8(vals)
     return vals
 
-
 def print_reg():
     """Prints all registers and their current values.  Excludes BRAMs."""
     keys = [k for k in get()
@@ -130,7 +116,6 @@ def print_reg():
         if 0 < len(v) < 32:
             print k, '\t', v
 
-
 try:
     import math
     import pylab
@@ -138,7 +123,6 @@ except:
     print 'Plotting functions are not available.'
 else:
     print 'Plotting functions added successfully.'
-
 
     def plot(values, frac_bits = 0, sign_bit = None):
         toplot = []
@@ -155,7 +139,6 @@ else:
         pylab.plot(toplot)
         pylab.show()
 
-        
     def plot_adc_hist(ngrab=1):
         d1 = numpy.ndarray(0, dtype=numpy.int8)
         d3 = numpy.ndarray(0, dtype=numpy.int8)
@@ -179,7 +162,6 @@ else:
         pylab.plot(x[1:]-0.5, h3, label='FPGA3')
         pylab.legend()
         pylab.show()
-
 
     def plot_iquv(iquv = 'IQUV'):
         """Plot the requested spectra.
@@ -215,3 +197,26 @@ else:
         if 'V' in iquv:
             plot(zeroes + zeroes + zeroes + bins.get('V', zeroes), 16, 32)
             
+def scale_factor(pol,factor):
+    """
+    Change the scale factor for a polarization by the given (relative) amount.
+    Valid pol values are I, Q, U, V
+    """
+    reg = "BEE2/FPGA2/SCALE_%s" % pol
+    cur_val = int(get(reg),16)
+    new_val = int(cur_val * factor)
+    set([reg],['%08x' % new_val])
+
+def increase_scales(factor=1.2):
+    """
+    Increase all scale params by a factor of 1.2
+    """
+    for pol in ('I','Q','U','V'):
+        scale_factor(pol,factor)
+
+def decrease_scales(factor=1.2):
+    """
+    Decrease all scale params by a factor of 1.2
+    """
+    for pol in ('I','Q','U','V'):
+        scale_factor(pol,1.0/factor)
