@@ -23,8 +23,6 @@ import sys
 from agent_client import AgentClient
 from agent import index
 
-from utility import xstr2float, float2xstr
-
 # Enable cross-session history.
 from os import path, environ, listdir
 history_file = path.join(environ["HOME"], ".guppi_history")
@@ -156,8 +154,7 @@ completer = Completer()
 # Register "command-line" functions.
 set = cicada.set
 arm = cicada.arm
-# float2xstr = cicada.float2xstr
-# xstr2float = cicada.xstr2float
+from utility import xstr2float, float2xstr
 
 def get(keys = index):
     if isinstance(keys, str):
@@ -251,5 +248,6 @@ try:
 except:
     pass
 else:
-    # print 'Successfully added custom scripts.'
+    print 'Successfully added custom scripts.'
     pass
+

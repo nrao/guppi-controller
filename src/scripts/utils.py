@@ -1,34 +1,7 @@
 from binascii import hexlify
 import numpy
 
-def generate_mask(n):
-    """Generates a bitmask of all 1s of the specified length."""
-    return int('1'*n if n>0 else '0', 2)
-
-def xstr2int(xstr, frac_bits=0, sign_bit=None, radix=16):
-    """Converts a numeric string from xilinx fixed point to floating point.
-    
-    'xstr' is expected to be a hex string, but can be any base as long
-    as the proper radix is provided. All xstr values must be in string
-    format, however.
-    """
-    count = 0
-    temp_fb = int(frac_bits)
-    mask = generate_mask(temp_fb)
-    upper = int(xstr, int(radix)) >> temp_fb
-    lower = int(xstr, int(radix)) & mask
-    #Account for a sign if present
-    if sign_bit:
-        temp_sb = int(sign_bit)-frac_bits-1
-        sign_mask = 1 << temp_sb
-        sign = sign_mask & upper
-        upper = (upper & generate_mask(temp_sb)) - sign
-    for i in range(0, temp_fb):
-        temp_fb -= 1
-        count += 1
-        if (lower >> temp_fb) & 1:
-            upper += 1.0/2**count
-    return upper
+from utility import generate_mask, xstr2float, float2xstr
 
 def verbose_set(key, value):
     """Performs a set operation with formatted output."""
@@ -127,7 +100,7 @@ else:
     def plot(values, frac_bits = 0, sign_bit = None):
         toplot = []
         for v in values:
-            toplot.append(xstr2int(v, frac_bits, sign_bit))
+            toplot.append(xstr2float(v, frac_bits, sign_bit))
         print
         print 'plotting ...'
         print 'x\ty'
