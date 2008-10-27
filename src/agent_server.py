@@ -21,6 +21,7 @@ from soaplib.service import soapmethod
 from soaplib.serializers.primitive import Array, Float, Integer, String
 
 from agent import Agent
+from utility import xstr2float, float2xstr
 
 class AgentServer(SimpleWSGISoapApp):
     def __init__(self, agent_class = None, namespace = None):
@@ -69,8 +70,8 @@ class AgentServer(SimpleWSGISoapApp):
 
     @soapmethod(String, Integer, Integer, _returns=Float)
     def xstr2float(self, xstr, frac_bits, sign_bit):
-        return self.agent.xstr2float(xstr, frac_bits, sign_bit)
+        return xstr2float(xstr, frac_bits, sign_bit)
 
     @soapmethod(Float, Integer, Integer, _returns=String)
     def float2xstr(self, num, frac_bits, sign_bit):
-        return self.agent.float2xstr(num, frac_bits, sign_bit)
+        return float2xstr(num, frac_bits, sign_bit)
