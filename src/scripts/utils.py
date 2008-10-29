@@ -83,7 +83,7 @@ def get_adc_samples(fpga=1, signed=True):
 def print_reg():
     """Prints all registers and their current values.  Excludes BRAMs."""
     keys = [k for k in get()
-            if not k.startswith('DAQ')]
+            if k.startswith('BEE2')]
     for k in keys:
         v = get(k)
         if 0 < len(v) < 32:

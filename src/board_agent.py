@@ -25,24 +25,19 @@ Note that strict typing is required for standard parameter passing.
 __copyright__ = "Copyright (C) 2008 Associated Universities, Inc."
 __license__ = "GPL"
 
+from agent       import index
+from agent       import Agent
+from board_utils import BoardUtils
+from binascii    import a2b_hex, b2a_hex
+from string      import zfill
 
-from agent import index
-from agent import Agent
-
-from bee2_utils import Bee2Utils
-
-from binascii import a2b_hex, b2a_hex
-from string import zfill
-
-
-class Bee2Agent(Agent):
+class BoardAgent(Agent):
     """Agent for the BEE2.
 
     Handles incoming requests.
     """
     def __init__(self):
-        self.utils = Bee2Utils()
-
+        self.__utils = BoardUtils()
 
     def get(self, keys = index):
         """Get all values of parameters matching keys in keys list.
@@ -55,11 +50,13 @@ class Bee2Agent(Agent):
         """
         result = []
         if keys != index:
-            result += [self.utils.reg_read(reg) for reg in keys]
+            # ~0.8 seconds
+            result += [self.__utils.readRegister(reg) for reg in keys]
             # Keep hexlification of registers separate; preserve time coupling
+            # ~0.056 seconds
             result = [b2a_hex(r) for r in result]
         else:
-            result += self.utils.build_file_list()
+            result += self.__utils.listRegisters()
         return result
 
 
@@ -76,9 +73,9 @@ class Bee2Agent(Agent):
         """
         result = []
         if keys != index:
-            result += [self.utils.bof_start(proc) for proc in keys]
+            result += [self.__utils.loadBof(proc) for proc in keys]
         else:
-            result += self.utils.available_bofs()
+            result += self.__utils.listFreeBofs()
         return result
 
 
@@ -90,16 +87,16 @@ class Bee2Agent(Agent):
         values -- sequence of values of parameters to set
         """
         result = []
-        #!!! What happens with an empty list
-        if keys[0] and values[0] and len(keys) == len(values):
-            # This looks a bit dumb but it relies on integer rounding
-            # in the division, so in this case (n/8)*8 != n for some n
+        if len(keys) > 0 and len(keys) == len(values) \
+                and keys[0] and values[0]:
+            # This relies on integer rounding in the division,
+            # so in this case (n/8)*8 != n for some n
             values = [a2b_hex(zfill(str(value), 8*((len(value)+7)/8)))
                       for value in values]
-            result += [self.utils.reg_write(reg, data)
+            result += [self.__utils.writeRegister(reg, data)
                        for reg, data in zip(keys, values)]
         else:
-            self.utils.debug('set: key or value mismatch')
+            self.__utils.debug('set: key or value mismatch')
             result += ['False' for i in keys]
         return result
     
@@ -115,9 +112,9 @@ class Bee2Agent(Agent):
         """
         result = []
         if keys != index:
-            result += [self.utils.bof_stop(proc) for proc in keys]
+            result += [self.__utils.unloadBof(proc) for proc in keys]
         else:
-            result += self.utils.running_bofs()
+            result += self.__utils.listRunningBofs()
         return result
 
 
@@ -127,17 +124,17 @@ class Bee2Agent(Agent):
         If keys is ['index'], return a list of info on all found profiles,
         formatted ['profile_name,s', ...] where s is state of profile.
 
-        See module 'states' property for more information.
+        See the agent module's 'states' property for more information.
 
         Keyword arguments:
         keys -- sequence of names of profiles for info (default index)
         """
         result = []
         if keys != index:
-            result += [bof for bof in self.utils.build_proc_list()
+            result += [bof for bof in self.__utils.listAllBofs()
                        if bof[:-2] in keys]
         else:
-            result += self.utils.build_proc_list()
+            result += self.__utils.listAllBofs()
         return result
 
-AgentClass = Bee2Agent
+AgentClass = BoardAgent
