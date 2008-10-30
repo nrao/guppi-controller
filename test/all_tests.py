@@ -3,8 +3,8 @@ import unittest
 
 sys.path.insert(1, '../src')
 
-from bee2UtilsTests  import Bee2UtilsTests
-from boardUtilsTests import BoardUtilsTests
+from bee2_utils_tests  import Bee2UtilsTests
+from board_utils_tests import BoardUtilsTests
 
 def suite():
     suite = unittest.TestSuite()

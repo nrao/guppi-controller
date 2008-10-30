@@ -150,10 +150,10 @@ else:
         reg_name = 'BEE2/FPGA2/vacc_subsys_%s_%s_%s_BRAM'
         for char in iquv:
             S_0, S_1, S_2, S_3 = (
-                unbram(get([reg_name % (char, char, 0)]), 8),
-                unbram(get([reg_name % (char, char, 1)]), 8),
-                unbram(get([reg_name % (char, char, 2)]), 8),
-                unbram(get([reg_name % (char, char, 3)]), 8)
+                unbram(get([reg_name % (char, char, 0)])[0], 8),
+                unbram(get([reg_name % (char, char, 1)])[0], 8),
+                unbram(get([reg_name % (char, char, 2)])[0], 8),
+                unbram(get([reg_name % (char, char, 3)])[0], 8)
                 )
             bins[char] = snapshot_bins((S_0, S_1, S_2, S_3))
             length = len(bins[char])
