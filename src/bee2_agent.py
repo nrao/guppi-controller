@@ -31,7 +31,7 @@ from board_utils import BoardUtils
 from binascii    import a2b_hex, b2a_hex
 from string      import zfill
 
-class BoardAgent(Agent):
+class Bee2Agent(Agent):
     """Agent for the BEE2.
 
     Handles incoming requests.
@@ -137,4 +137,4 @@ class BoardAgent(Agent):
             result += self.__utils.listAllBofs()
         return result
 
-AgentClass = BoardAgent
+AgentClass = Bee2Agent

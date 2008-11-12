@@ -1,7 +1,7 @@
 import sys
 import unittest
 
-sys.path.insert(1, '../src')
+#sys.path.insert(1, '../src')
 
 from bee2_utils_tests  import Bee2UtilsTests
 from board_utils_tests import BoardUtilsTests

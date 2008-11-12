@@ -64,10 +64,16 @@ class Bee2UtilsTests(unittest.TestCase):
         contents = 'fedcba0987654321'
         if os.path.exists(testFile):
             os.remove(testFile)
-        self.__utils.writeFile(testFile, contents)
+        self.assertEqual('True', self.__utils.writeFile(testFile, contents))
         self.assertEqual(contents, self.__utils.readFile(testFile))
         # Failure
         #!!! Depends on file permissions
+        testFile = os.path.join(self.__prefix, 'readFile')
+        contents = 'fedcba0987654321'
+        expected = '1234567890abcdef'
+        self.assertEqual('False', self.__utils.writeFile(testFile, contents))
+        self.assertEqual(expected, self.__utils.readFile(testFile))
+        
 
 if __name__ == '__main__':
     unittest.main()

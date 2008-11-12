@@ -29,6 +29,10 @@ from subprocess import PIPE, Popen
 from time       import strftime, time
 
 class Bee2Utils:
+    """Utilities for the Berkeley Emulation Engine 2 (BEE2).
+
+    Runs on a linux-like OS and uses standard command line features.
+    """
     def __init__(self, debug = True):
         self.__debug = debug
         self.__list_age = 0
@@ -41,12 +45,12 @@ class Bee2Utils:
             timestamp = strftime(self.__timestamp_fmt)
             print >> sys.stderr, timestamp, message
 
-    def getProcInfo(self, regexp):
+    def getProcInfo(self, re_str):
         """Returns the full name and PID of processes matching 'regex'.
 
         Results are returned in ['name', 'pid'] pairs by a generator object.
         """
-        regex = re.compile(regexp, re.IGNORECASE)
+        regex = re.compile(re_str, re.IGNORECASE)
         # Refresh the list every N seconds
         now = time()
         if (now - self.__list_age) > 3:
@@ -96,7 +100,12 @@ class Bee2Utils:
         return result
 
     def startProc(self, procname, procdir = '.'):
-        """Starts a single bof process."""
+        """Starts a single process.
+        
+        Assumes that any processes not fully qualified, IE '/bin/ps',
+        will be located in the directory specified by the 'procdir'
+        parameter (defaults to '.', or current working directory).
+        """
         result = 'False'
         try:
             args = procname.split()
@@ -110,7 +119,7 @@ class Bee2Utils:
         return result
 
     def stopProc(self, procname):
-        """Stops a single bof process.
+        """Stops a single process.
 
         Process names must be uniquely identifiable. In the case of
         substrings with more than a single match, no processes are
