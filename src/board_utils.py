@@ -129,6 +129,7 @@ class BoardUtils:
         return result
 
     def unloadBof(self, bofname):
+        """Stops a single bof process, if bofname is unique."""
         return self.__sysutils.stopProc(bofname)
 
     def writeRegister(self, register, value):
