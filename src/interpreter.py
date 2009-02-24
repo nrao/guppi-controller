@@ -22,6 +22,7 @@ import sys
 
 from agent_client import AgentClient
 from agent import index
+from completer import Completer
 
 # Enable cross-session history.
 from os import path, environ, listdir
@@ -54,105 +55,7 @@ def set_prompt(prompt, sentinel = '>', spacer = True):
         sys.ps1 += ' '
         sys.ps2 += ' '
 
-# Prepare tab auto-completion for fuctions.
-class Completer:
-    def __init__(self):
-        self.ignored = []
-
-        self.prereg = globals().keys()
-        self.functions = []
-        self.parameters = []
-        self.profiles_a = []
-        self.profiles_r = []
-
-        self.matches = [None]
-        self.prefix = None
-        self.term = dict(get = ')'
-                         , load = ')'
-                         , set = ', '
-                         , unload = ')'
-                         )
-        self.noarg = ['is_locked', 'lock', 'unlock', 'arm']
-
-    def complete(self, text, loc):
-        tokens = text.split('(')
-        func = tokens[0]
-        if text.find('(') != -1:
-            term = self.term.get(func, '')
-            param = tokens[1].replace("'", '')
-            if func in ('get', 'set'):
-                self.matches = [func + '(' + "'" + p + "'" + term for p
-                                in self.parameters if p.startswith(param)]
-            elif func in ('load'):
-                self.matches = [func + '(' + "'" + p + "'" + term for p
-                                in self.profiles_a if p.startswith(param)]
-            elif func in ('unload'):
-                self.matches = [func + '(' + "'" + p + "'" + term for p
-                                in self.profiles_r if p.startswith(param)]
-        else:
-            self.matches = []
-            matches = [f + '(' for f in self.functions
-                       if f.startswith(text)]
-            for match in matches:
-                if match.replace('(', '') in self.noarg:
-                    match = match + ')'
-                self.matches.append(match)
-        try:
-            return self.matches[loc]
-        except IndexError:
-            return [None]
-
-    def ignore(self, key = None):
-        if key:
-            self.ignored.append(key)
-            self.update_functions()
-            self.update_parameters()
-            self.update_profiles()
-        else:
-            return self.ignored
-
-    def noargs(self, key):
-        self.noarg.append(key)
-
-    def trim(self, list):
-        for key in self.ignored:
-            try:
-                list.remove(key)
-            except ValueError:
-                pass
-
-    def update_functions(self):
-        postreg = globals().keys()
-        for key in self.prereg:
-            postreg.remove(key)
-
-        self.functions = postreg
-        self.trim(self.functions)
-        self.functions.sort()
-
-    def update_parameters(self):
-        self.parameters = get()
-        self.trim(self.parameters)
-        self.parameters.sort()
-
-    def update_profiles(self):
-        self.profiles_a = []
-        self.profiles_r = []
-        for token in profiles():
-            profile, status = token.split(',')
-            if status in ('a'):
-                self.profiles_a.append(profile)
-            elif status in ('r', 'u'):
-                self.profiles_r.append(profile)
-        self.trim(self.profiles_a)
-        self.trim(self.profiles_r)
-        self.profiles_a.sort()
-        self.profiles_r.sort()
-
-completer = Completer()
-
 # Register "command-line" functions.
-set = cicada.set
 arm = cicada.arm
 from utility import xstr2float, float2xstr
 
@@ -161,6 +64,14 @@ def get(keys = index):
         keys = [keys]
         return cicada.get(keys)[0]
     return cicada.get(keys)
+
+def set(keys, values):
+    if isinstance(keys, str):
+        keys = [keys]
+        if isinstance(values, str):
+            values = [values]
+        return cicada.set(keys, values)[0]
+    return cicada.set(keys, values)
 
 def parameters(keys = index):
     if isinstance(keys, str):
@@ -180,8 +91,8 @@ def load(keys = index):
         result = cicada.load(keys)[0]
     else:
         result = cicada.load(keys)
-    completer.update_profiles()
-    completer.update_parameters()
+    # completer.update_profiles()
+    # completer.update_parameters()
     return result
 
 def unload(keys = index):
@@ -190,40 +101,24 @@ def unload(keys = index):
         result = cicada.unload(keys)[0]
     else:
         result = cicada.unload(keys)
-    completer.update_profiles()
-    completer.update_parameters()
+    # completer.update_profiles()
+    # completer.update_parameters()
     return result
 
-completer.ignore('completer')
-completer.update_functions()
-
-# Prepare tab auto-completion for parameters.
-completer.update_parameters()
-
-# Prepare tab auto-completion for profiles.
-completer.update_profiles()
-
-# Set tab auto-completion in the readline module.
-delims = readline.get_completer_delims()
-delims = delims.replace('(', '').replace('/', '').replace("'", '')
-# To do: see if FEW delims is the way to go.
-delims = ' =)'
-readline.set_completer_delims(delims)
-
-readline.parse_and_bind("tab: complete")
-readline.set_completer(completer.complete)
+# readline.parse_and_bind("tab: complete")
+# readline.set_completer(completer.complete)
 
 # Execute files called at command-line.
-set_prompt('', '', False)
-for i in range(1, len(sys.argv)):
-    execfile(sys.argv[i])
+# set_prompt('', '', False)
+# for i in range(1, len(sys.argv)):
+#     execfile(sys.argv[i])
 
 # Print welcome message(s).
 set_prompt('guppi')
 print 'Welcome to the NRAO GUPPI interpreter and command prompt.'
 print
-print 'functions:'
-for func in completer.functions: print '   ', func
+# print 'functions:'
+# for func in completer.functions: print '   ', func
 print
 print 'All values are ASCII representation of hex values.'
 print 'Use tab auto-completion for functions and parameters.'
