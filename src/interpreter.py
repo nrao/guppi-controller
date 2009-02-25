@@ -42,6 +42,7 @@ del path, environ
 # Establish client.
 # cicada = AgentClient(host = 'bee2')
 cicada = AgentClient()
+completer = Completer()
 
 # Set the command prompt
 def set_prompt(prompt, sentinel = '>', spacer = True):
@@ -105,8 +106,8 @@ def unload(keys = index):
     # completer.update_parameters()
     return result
 
-# readline.parse_and_bind("tab: complete")
-# readline.set_completer(completer.complete)
+readline.parse_and_bind("tab: complete")
+readline.set_completer(completer.complete)
 
 # Execute files called at command-line.
 # set_prompt('', '', False)
