@@ -20,7 +20,13 @@ import re
 
 # Prepare tab auto-completion for fuctions.
 class Completer:
-    pass
+    def __init__(self):
+        self.functions = ['one', 'two']
+        self.parameters = []
+        self.profiles = []
+
+    def get_functions(self):
+        return self.functions
 
     def complete(self, text, state):
         return None

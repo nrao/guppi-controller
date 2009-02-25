@@ -118,11 +118,16 @@ readline.set_completer(completer.complete)
 set_prompt('guppi')
 print 'Welcome to the NRAO GUPPI interpreter and command prompt.'
 print
-# print 'functions:'
-# for func in completer.functions: print '   ', func
-print
+try:
+    completer.get_functions()
+except:
+    pass
+else:
+    print 'functions:'
+    for func in completer.get_functions(): print '   ', func
+    print
+    print 'Use tab auto-completion for functions and parameters.'
 print 'All values are ASCII representation of hex values.'
-print 'Use tab auto-completion for functions and parameters.'
 print
 print
 
