@@ -16,6 +16,7 @@ setup(
   , package_dir = {'guppi' : 'src'}
   # , packages    = ['cicada', 'guppi']
   # , package_dir = {'cicada': 'src', 'guppi': path...})
+  , scripts = ['scripts/guppi', 'scripts/guppi_server']
   , maintainer = "NRAO"
   , maintainer_email = "rduplain@nrao.edu"
   # , url = ""
