@@ -4,8 +4,7 @@ import socket
 class Synth(Agent):
     def __init__(self, addr=('169.254.128.30', 1234)):
         self.__addr = addr
-        self.__keys = ['CFRQ', 'RFLV', 'SWEEP', '*IDN', '*RST']
-        self.__sepr = ';'
+        self.__keys = ['CFRQ', 'RFLV']
         self.__term = '\n'
 
     def _recv(self):
@@ -39,6 +38,22 @@ class Synth(Agent):
         return result
 
     def set(self, keys, values):
+        """Basic set.
+
+        Does not ensure that the value was set correctly, only that it is sent.
+        """
+        result = []
+        for key, value in zip(keys, values):
+            key = key.replace('/', ':')
+            self._send('%s %s' % (key, value))
+            result.append('True')
+        return result
+
+    def set2(self, keys, values):
+        """Alternate set.
+
+        Alternate set which attmempts to ensure that the value was set correctly.
+        """
         # Replaces '/' with ':' in keys and tests to ensure the value
         # is set properly
         #!!! Test this to make sure it works!
@@ -58,22 +73,3 @@ class Synth(Agent):
             else:
                 result.append(float(value) == float(test))
         return result
-
-#
-# Example scripts, plus some cheating
-#
-def doSweep(start, stop, inc='1MHZ', time='100MS'):
-    """Sets synthesizer mode to SWEPT and performs a sweep."""
-    a = Marconi()
-    a.set(['CFRQ/MODE'], ['SWEPT'])
-    a._send('SWEEP:CFRQ:START %s; STOP %s; INC %s; TIME %s'
-            % (start, stop, inc, time))
-    a._send('SWEEP:RESET')
-    a._send('SWEEP:GO')
-
-def freqSlewTo(stop, inc='1MHZ', time='100MS'):
-    a = Marconi()
-    a.set(['CFRQ/MODE'], ['SWEPT'])
-    a._send('SWEEP:CFRQ:START %s; STOP %s; INC %s; TIME %s'
-            % (a,get(['CFRQ/VALUE']), stop, inc, time))
-    a._send('SWEEP:GO')
