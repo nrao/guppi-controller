@@ -17,7 +17,7 @@ __copyright__ = "Copyright (C) 2008 Associated Universities, Inc."
 __license__ = "GPL"
 
 from agent import Agent, index, success, failure
-from guppi_utils import guppi_status
+from guppi_daq.guppi_utils import guppi_status
 
 class DaqAgent(Agent):
     def __init__(self):
