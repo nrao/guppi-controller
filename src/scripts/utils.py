@@ -12,34 +12,34 @@ def verbose_set(key, value):
     
 def init():
     """Initializes registers to their default values."""
-    verbose_set(['BEE2/FPGA1/FFT_SHIFT'], ['aaaaaaaa'])
-    verbose_set(['BEE2/FPGA1/LE_CNTRL'], ['00000000'])
-    verbose_set(['BEE2/FPGA1/SAMP_CMD'], ['00000000'])
-    verbose_set(['BEE2/FPGA1/DC_SAMP_EN'], ['00000001'])
-    verbose_set(['BEE2/FPGA1/DC_BINS_EN'], ['00000001'])
+    verbose_set('BEE2/FPGA1/FFT_SHIFT', 'aaaaaaaa')
+    verbose_set('BEE2/FPGA1/LE_CNTRL', '00000000')
+    verbose_set('BEE2/FPGA1/SAMP_CMD', '00000000')
+    verbose_set('BEE2/FPGA1/DC_SAMP_EN', '00000001')
+    verbose_set('BEE2/FPGA1/DC_BINS_EN', '00000001')
     
-    verbose_set(['BEE2/FPGA2/GUPPi_PIPES_ARM'], ['00000000'])
-    verbose_set(['BEE2/FPGA2/OFFSET_I'], ['00000000'])
-    verbose_set(['BEE2/FPGA2/OFFSET_Q'], ['00000000'])
-    verbose_set(['BEE2/FPGA2/OFFSET_U'], ['00000000'])
-    verbose_set(['BEE2/FPGA2/OFFSET_V'], ['00000000'])
-    verbose_set(['BEE2/FPGA2/SCALE_I'], ['00010000'])
-    verbose_set(['BEE2/FPGA2/SCALE_Q'], ['00010000'])
-    verbose_set(['BEE2/FPGA2/SCALE_U'], ['00010000'])
-    verbose_set(['BEE2/FPGA2/SCALE_V'], ['00010000'])
-    verbose_set(['BEE2/FPGA2/ACC_LENGTH'], ['0000000f'])
-    verbose_set(['BEE2/FPGA2/DEST_IP'], ['c0a80307'])
-    verbose_set(['BEE2/FPGA2/DEST_PORT'], ['0000c350'])
-    verbose_set(['BEE2/FPGA2/DC_BINS_EN'], ['00000001'])
+    verbose_set('BEE2/FPGA2/GUPPi_PIPES_ARM', '00000000')
+    verbose_set('BEE2/FPGA2/OFFSET_I', '00000000')
+    verbose_set('BEE2/FPGA2/OFFSET_Q', '00000000')
+    verbose_set('BEE2/FPGA2/OFFSET_U', '00000000')
+    verbose_set('BEE2/FPGA2/OFFSET_V', '00000000')
+    verbose_set('BEE2/FPGA2/SCALE_I', '00010000')
+    verbose_set('BEE2/FPGA2/SCALE_Q', '00010000')
+    verbose_set('BEE2/FPGA2/SCALE_U', '00010000')
+    verbose_set('BEE2/FPGA2/SCALE_V', '00010000')
+    verbose_set('BEE2/FPGA2/ACC_LENGTH', '0000000f')
+    verbose_set('BEE2/FPGA2/DEST_IP', 'c0a80307')
+    verbose_set('BEE2/FPGA2/DEST_PORT', '0000c350')
+    verbose_set('BEE2/FPGA2/DC_BINS_EN', '00000001')
     text = 'begin\nmac = 10:10:10:10:10:11\nip = 192.168.3.8\n' + \
            'gateway = 192.168.3.8\nport = 50000\nend\n'
-    verbose_set(['BEE2/FPGA2/ten_GbE'], [hexlify(text)])
+    verbose_set('BEE2/FPGA2/ten_GbE', hexlify(text))
     
-    verbose_set(['BEE2/FPGA3/FFT_SHIFT'], ['aaaaaaaa'])
-    verbose_set(['BEE2/FPGA3/LE_CNTRL'], ['00000000'])
-    verbose_set(['BEE2/FPGA3/SAMP_CMD'], ['00000000'])
-    verbose_set(['BEE2/FPGA3/DC_SAMP_EN'], ['00000001'])
-    verbose_set(['BEE2/FPGA3/DC_BINS_EN'], ['00000001'])
+    verbose_set('BEE2/FPGA3/FFT_SHIFT', 'aaaaaaaa')
+    verbose_set('BEE2/FPGA3/LE_CNTRL', '00000000')
+    verbose_set('BEE2/FPGA3/SAMP_CMD', '00000000')
+    verbose_set('BEE2/FPGA3/DC_SAMP_EN', '00000001')
+    verbose_set('BEE2/FPGA3/DC_BINS_EN', '00000001')
 
 def snapshot_bins(brams, limit = 512):
     bins = []
