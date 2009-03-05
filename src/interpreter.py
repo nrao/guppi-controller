@@ -21,7 +21,7 @@ import re
 import readline
 import sys
 
-from agent_client import AgentClient
+from client import Client
 from agent import index
 from completer import Completer
 
@@ -41,8 +41,8 @@ del atexit
 del path, environ
 
 # Establish client.
-# cicada = AgentClient(host = 'bee2')
-cicada = AgentClient()
+# cicada = Client(host = 'bee2')
+cicada = Client()
 completer = Completer()
 
 # Set the command prompt
@@ -59,53 +59,14 @@ def set_prompt(prompt, sentinel = '>', spacer = True):
 
 # Register "command-line" functions.
 arm = cicada.arm
+get = cicada.get
+set = cicada.set
+parameters = cicada.parameters
+profiles = cicada.profiles
+load = cicada.load
+unload = cicada.unload
+
 from utility import xstr2float, float2xstr
-
-def get(keys = index):
-    if isinstance(keys, str):
-        keys = [keys]
-        return cicada.get(keys)[0]
-    return cicada.get(keys)
-
-def set(keys, values):
-    if isinstance(keys, str):
-        keys = [keys]
-        if isinstance(values, str):
-            values = [values]
-        return cicada.set(keys, values)[0]
-    return cicada.set(keys, values)
-
-def parameters(keys = index):
-    if isinstance(keys, str):
-        keys = [keys]
-        return cicada.parameters(keys)[0]
-    return cicada.parameters(keys)
-
-def profiles(keys = index):
-    if isinstance(keys, str):
-        keys = [keys]
-        return cicada.profiles(keys)[0]
-    return cicada.profiles(keys)
-
-def load(keys = index):
-    if isinstance(keys, str):
-        keys = [keys]
-        result = cicada.load(keys)[0]
-    else:
-        result = cicada.load(keys)
-    # completer.update_profiles()
-    # completer.update_parameters()
-    return result
-
-def unload(keys = index):
-    if isinstance(keys, str):
-        keys = [keys]
-        result = cicada.unload(keys)[0]
-    else:
-        result = cicada.unload(keys)
-    # completer.update_profiles()
-    # completer.update_parameters()
-    return result
 
 readline.parse_and_bind("tab: complete")
 readline.set_completer(completer.complete)
