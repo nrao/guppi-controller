@@ -32,7 +32,7 @@ def init():
     verbose_set(['BEE2/FPGA2/DEST_PORT'], ['0000c350'])
     verbose_set(['BEE2/FPGA2/DC_BINS_EN'], ['00000001'])
     text = 'begin\nmac = 10:10:10:10:10:11\nip = 192.168.3.8\n' + \
-           'gateway = 192.168.3.8\nport = 50000\nend'
+           'gateway = 192.168.3.8\nport = 50000\nend\n'
     verbose_set(['BEE2/FPGA2/ten_GbE'], [hexlify(text)])
     
     verbose_set(['BEE2/FPGA3/FFT_SHIFT'], ['aaaaaaaa'])
