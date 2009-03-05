@@ -34,7 +34,8 @@ def init():
     text = 'begin\nmac = 10:10:10:10:10:11\nip = 192.168.3.8\n' + \
            'gateway = 192.168.3.8\nport = 50000\nend\n'
     verbose_set('BEE2/FPGA2/ten_GbE', hexlify(text))
-    
+    print 'encoded from:\n%s' % text
+
     verbose_set('BEE2/FPGA3/FFT_SHIFT', 'aaaaaaaa')
     verbose_set('BEE2/FPGA3/LE_CNTRL', '00000000')
     verbose_set('BEE2/FPGA3/SAMP_CMD', '00000000')
