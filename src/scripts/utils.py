@@ -1,7 +1,10 @@
 from binascii import hexlify
 import numpy
 
-from utility import generate_mask, xstr2float, float2xstr
+try:
+    from utility import generate_mask, xstr2float, float2xstr
+except ImportError:
+    from guppi.utility import generate_mask, xstr2float, float2xstr
 
 def verbose_set(key, value):
     """Performs a set operation with formatted output."""

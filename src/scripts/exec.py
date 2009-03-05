@@ -1,6 +1,8 @@
 # list script files in this directory to execute, in target order
 # order counts!  make sure dependecies are met!
 
+import os
+
 lineup = ['utils.py'
           # , 'one.py'
           # , 'two.py'
@@ -8,8 +10,11 @@ lineup = ['utils.py'
 
 for script in lineup:
     try:
-        # To do: guarantee proper path to current directory...
-        #        scripts/ is probably not working directory
-        execfile('scripts/%s' % script)
+        thisdir = os.path.dirname(os.path.abspath(__file__))
+        execfile(thisdir + '/' + '%s' % script)
     except IOError:
-        pass
+        try:
+            thisdir = os.path.dirname(os.path.abspath(__file__))
+            execfile(thisdir + '/scripts' + '/' + '%s' % script)
+        except IOError:
+            pass

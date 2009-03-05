@@ -16,6 +16,7 @@
 __copyright__ = "Copyright (C) 2008 Associated Universities, Inc."
 __license__ = "GPL"
 
+import os
 import re
 import readline
 import sys
@@ -144,11 +145,15 @@ print
 # Support auto-completion of functions from execd files?
 
 # Be ballsy and exec the scripts/exec.py bootstrap file.
+
 try:
-    execfile('scripts/exec.py')
+    print 'Loading console scripts...'
+    thisdir = os.path.dirname(os.path.abspath(__file__))
+    execfile(thisdir + '/' + 'scripts/exec.py')
 except:
+    print 'Failed to load custom scripts.'
     pass
+    # from scripts import *
 else:
     print 'Successfully added custom scripts.'
     pass
-
