@@ -47,17 +47,29 @@ class Client(Agent):
         return self._client.get(keys)
 
     def set(self, keys, values = None):
-        # support set([(key1, value1), (key2, value2)]) and set({...})
+        # Support set([(key1, value1), (key2, value2)]) and set({...}).
+        # Note that the return syntax differs in this mode.
+        # set([(key1, value1), (key2, value2)]) returns 
+        #     [(key1, result1), (key2, result2)]
+        # set({key1: value1}) returns {key1, result1}
         if not values:
+            return_dict = False
             if isinstance(keys, dict):
+                return_dict = True
                 keys = keys.items()
-            if isinstance(keys, list) or isinstance(keys, tuple):
-                items = keys
-                keys = []
-                values = []
-                for k, v in items:
-                    keys.append(k)
-                    values.append(v)
+
+            items = keys
+            keys = []
+            values = []
+            for k, v in items:
+                keys.append(k)
+                values.append(v)
+
+            results = self._client.set(keys, values)
+            result_items = zip(keys, results)
+            if return_dict:
+                return dict(result_items)
+            return result_items
 
         # Support using strings instead of lists for a single key, value pair.
         if isinstance(keys, str):
