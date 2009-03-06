@@ -23,7 +23,7 @@ class Completer:
     '''Create a new completer for the command-line, for use with readline.
 
     This completer is specifically designed for guppi/cicada.
-    This is based on inspiration/examples from Python built-in rlcompleter.
+    Based partly on inspiration/examples from Python built-in rlcompleter.
     '''
 
     def __init__(self):
@@ -33,10 +33,12 @@ class Completer:
         self.profiles_r = []
         self.matches = []
 
+        self.clear_ignored()
+
         self._syntax_noarg = ['function()']
         self.syntax = {}
-        self.syntax[''] = ['function(parameter)']
-        self.syntax['get'] = self._syntax_noarg + self.syntax['']
+        self.syntax[''] = ['function']
+        self.syntax['get'] = self._syntax_noarg + ['function(parameter)']
         self.syntax['set'] = ['function(parameter, value)']
         self.syntax['load'] = self._syntax_noarg + ['function(profile_a)']
         self.syntax['unload'] = self._syntax_noarg + ['function(profile_r)']
@@ -53,7 +55,7 @@ class Completer:
         True
         >>> 
         '''
-        return self.functions
+        return [f for f in self.functions if f not in self.get_ignored()]
 
     def get_syntax(self, function):
         '''Accessor for the registered syntax for a function. Returns [str].
@@ -85,7 +87,7 @@ class Completer:
         ['a', 'bb', 'ccc']
         >>> 
         '''
-        return self.parameters
+        return [p for p in self.parameters if p not in self.get_ignored()]
 
     def set_parameters(self, parameters):
         '''Accessor for parameters.
@@ -104,7 +106,7 @@ class Completer:
         ['a', 'bb', 'ccc']
         >>> 
         '''
-        return self.profiles_a
+        return [a for a in self.profiles_a if a not in self.get_ignored()]
 
     def set_profiles_a(self, profiles):
         '''Accessor for available profiles.
@@ -123,7 +125,7 @@ class Completer:
         ['d', 'ee', 'fff']
         >>> 
         '''
-        return self.profiles_r
+        return [r for r in self.profiles_r if r not in self.get_ignored()]
 
     def set_profiles_r(self, profiles):
         '''Accessor for running profiles.
@@ -136,19 +138,19 @@ class Completer:
         Test usage:
         >>> c = Completer()
         >>> c.get_profiles()
-        ([], [])
+        []
         >>> c.set_profiles_a(['a', 'bb', 'ccc'])
         >>> c.get_profiles()
-        (['a', 'bb', 'ccc'], [])
+        ['a', 'bb', 'ccc']
         >>> c.set_profiles_r(['d', 'ee', 'fff'])
         >>> c.get_profiles()
-        (['a', 'bb', 'ccc'], ['d', 'ee', 'fff'])
+        ['a', 'bb', 'ccc', 'd', 'ee', 'fff']
         >>> c.set_profiles(c.get_profiles_r(), c.get_profiles_a())
         >>> c.get_profiles()
-        (['d', 'ee', 'fff'], ['a', 'bb', 'ccc'])
+        ['d', 'ee', 'fff', 'a', 'bb', 'ccc']
         >>> 
         '''
-        return self.profiles_a, self.profiles_r
+        return self.profiles_a + self.profiles_r
 
     def set_profiles(self, available, running):
         '''Accessor for all profiles.
@@ -156,7 +158,7 @@ class Completer:
         self.profiles_a = available
         self.profiles_r = running
 
-    def register(self, function, syntax = None):
+    def register(self, function, syntax = None, noarg = False):
         '''Register function for completion. Optionally provide syntax.
         If no syntax is provided, completion will guess a default.
 
@@ -187,6 +189,12 @@ class Completer:
         >>> c.register('one', 'function()')
         >>> c.get_syntax('one')
         ['function()']
+        >>> c.register('one', noarg = True)
+        >>> c.get_syntax('one')
+        ['function()']
+        >>> c.register('too', noarg = True)
+        >>> c.get_syntax('too')
+        ['function()']
         >>> 
         '''
         if function not in self.functions:
@@ -198,8 +206,12 @@ class Completer:
                 formats.append(syntax)
             self.syntax[function] = formats
 
+        if noarg:
+            self.noarg(function)
+
     def unregister(self, function):
         '''Remove a function and its known syntax from completion.
+        Optionally accept a list of functions.
 
         Test usage:
         >>> # Test setup:
@@ -230,9 +242,17 @@ class Completer:
         >>> c.unregister('one')
         >>> c.get_functions()
         []
+        >>> # Try again to make sure it doesn't choke.
+        >>> c.unregister('one')
+        >>> c.get_functions()
+        []
         >>> 
         '''
-        self.functions.remove(function)
+        if not isinstance(function, str):
+            return [self.unregister(f) for f in function]
+
+        if function in self.functions:
+            self.functions.remove(function)
         self.syntax.pop(function, None)
 
     def noarg(self, function):
@@ -258,13 +278,136 @@ class Completer:
 
     def accept(self, namespace):
         '''Accepts a namespace of functions for completion. Assumes no syntax.
+        Normally, namespace is a dict, but a list of strings is also accepted.
+
+        Test usage:
+        >>> c = Completer()
+        >>> c.accept({'a': '...', 'b': '...'})
+        >>> c.get_functions()
+        ['a', 'b']
+        >>> c.get_syntax('a')
+        []
+        >>> c.get_syntax('b')
+        []
+        >>> 
+        >>> c = Completer()
+        >>> c.accept(['a', 'b'])
+        >>> c.get_functions()
+        ['a', 'b']
+        >>> c.get_syntax('a')
+        []
+        >>> c.get_syntax('b')
+        []
+        >>> 
         '''
-        pass
+        if isinstance(namespace, dict):
+            namespace = namespace.keys()
 
-    def ignore(self, function):
-        pass
+        for function in namespace:
+            self.register(function)
 
-    # def ignore namespace?
+    def ignore(self, function_or_namespace):
+        '''Ignores a function (str) or a namespace (dict) when completing.
+        Normally, namespace is a dict, but a list of strings is also accepted.
+
+        Test usage:
+        >>> c = Completer()
+        >>> c.accept(['one', 'two', 'three', 'four', 'function'])
+        >>> c.set_parameters(['parameters', 'two', 'three', 'four'])
+        >>> c.set_profiles_a(['profiles_a', 'two', 'three', 'four'])
+        >>> c.set_profiles_r(['profiles_r', 'two', 'three', 'four'])
+        >>> c.get_functions()
+        ['one', 'two', 'three', 'four', 'function']
+        >>> c.get_parameters()
+        ['parameters', 'two', 'three', 'four']
+        >>> c.get_profiles_a()
+        ['profiles_a', 'two', 'three', 'four']
+        >>> c.get_profiles_r()
+        ['profiles_r', 'two', 'three', 'four']
+        >>> 
+        >>> c.ignore('two')
+        >>> c.get_functions()
+        ['one', 'three', 'four', 'function']
+        >>> c.get_parameters()
+        ['parameters', 'three', 'four']
+        >>> c.get_profiles_a()
+        ['profiles_a', 'three', 'four']
+        >>> c.get_profiles_r()
+        ['profiles_r', 'three', 'four']
+        >>> 
+        >>> c.ignore(['three', 'four'])
+        >>> c.get_functions()
+        ['one', 'function']
+        >>> c.get_parameters()
+        ['parameters']
+        >>> c.get_profiles_a()
+        ['profiles_a']
+        >>> c.get_profiles_r()
+        ['profiles_r']
+        >>> 
+        >>> c.ignore({'profiles_a': '...', 'profiles_r': '...'})
+        >>> c.get_functions()
+        ['one', 'function']
+        >>> c.get_parameters()
+        ['parameters']
+        >>> c.get_profiles_a()
+        []
+        >>> c.get_profiles_r()
+        []
+        >>> 
+        '''
+        namespace = None
+        function = None
+        sequence = None
+
+        if isinstance(function_or_namespace, dict):
+            namespace = function_or_namespace
+        elif isinstance(function_or_namespace, str):
+            function = function_or_namespace
+        elif isinstance(function_or_namespace, list):
+            sequence = function_or_namespace
+        elif isinstance(function_or_namespace, tuple):
+            sequence = function_or_namespace
+
+        if namespace:
+            sequence = namespace.keys()
+
+        if sequence:
+            for function in sequence:
+                self.ignore(function)
+
+        if function:
+            self.get_ignored().append(function)
+
+    def get_ignored(self):
+        '''Accessor for ignored list.
+
+        Test usage:
+        >>> c = Completer()
+        >>> c.get_ignored()
+        []
+        >>> c.set_ignored(['a', 'b'])
+        >>> c.get_ignored()
+        ['a', 'b']
+        >>> c.clear_ignored()
+        >>> c.get_ignored()
+        []
+        >>> c.ignore('a')
+        >>> c.get_ignored()
+        ['a']
+        >>> 
+        '''
+        return self.ignored
+
+    def set_ignored(self, ignored):
+        '''Accessor for ignored list.
+        '''
+        self.ignored = ignored
+
+    def clear_ignored(self):
+        '''Clear ignored list.
+        '''
+        self.set_ignored([])
 
     def parameter_matches(self, text):
         '''Returns a list of parameters matching text to be completed.

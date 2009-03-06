@@ -57,6 +57,9 @@ def set_prompt(prompt, sentinel = '>', spacer = True):
         sys.ps1 += ' '
         sys.ps2 += ' '
 
+completer.ignore(globals())
+completer.ignore(locals())
+
 # Register "command-line" functions.
 arm = cicada.arm
 get = cicada.get
@@ -66,7 +69,7 @@ profiles = cicada.profiles
 load = cicada.load
 unload = cicada.unload
 
-from utility import xstr2float, float2xstr
+completer.ignore('parameters') # not ready yet
 
 readline.parse_and_bind("tab: complete")
 readline.set_completer(completer.complete)
@@ -75,6 +78,8 @@ readline.set_completer(completer.complete)
 # set_prompt('', '', False)
 # for i in range(1, len(sys.argv)):
 #     execfile(sys.argv[i])
+
+completer.accept(locals())
 
 # Print welcome message(s).
 set_prompt('guppi')
@@ -87,6 +92,7 @@ except:
 else:
     print 'functions:'
     for func in completer.get_functions(): print '   ', func
+    del func
     print
     print 'Use tab auto-completion for functions and parameters.'
 print 'All values are ASCII representation of hex values.'
@@ -107,6 +113,8 @@ print
 
 # Be ballsy and exec the scripts/exec.py bootstrap file.
 
+from utility import xstr2float, float2xstr
+
 try:
     print 'Loading console scripts...'
     thisdir = os.path.dirname(os.path.abspath(__file__))
@@ -118,3 +126,16 @@ except:
 else:
     print 'Successfully added custom scripts.'
     pass
+
+completer.accept(globals())
+
+# Quick fix: clean up tab completion functions, potentially dangerous.
+# i.e. how do we know here we want to unregister these functions?
+completer.unregister(['thisdir'
+                      , 'GInitiallyUnowned'
+                      , 'numpy'
+                      , 'script'
+                      , 'lineup'
+                      , 'math'
+                      , 'pylab'
+                      ])
