@@ -116,25 +116,44 @@ else:
         pylab.plot(toplot)
         pylab.show()
 
-    def plot_adc_hist(ngrab=1):
+    def plot_adc_hist(ngrab=1, refresh=True):
         d1 = numpy.ndarray(0, dtype=numpy.int8)
         d3 = numpy.ndarray(0, dtype=numpy.int8)
         for i in range(ngrab):
+            if refresh: dum=get()
             d1 = numpy.append(d1, get_adc_samples(fpga=1,signed=True))
             d3 = numpy.append(d3, get_adc_samples(fpga=3,signed=True))
         (h1,x) = numpy.histogram(d1,bins=128,range=(-128,128),new=True)
         (h3,x) = numpy.histogram(d3,bins=128,range=(-128,128),new=True)
-        s1 = (d1.mean(), d1.std(), d1.min(), d1.max())
-        s3 = (d3.mean(), d3.std(), d3.min(), d3.max())
+        s1 = [d1.mean(), d1.std(), d1.min(), d1.max()]
+        s3 = [d3.mean(), d3.std(), d3.min(), d3.max()]
         target_rms = 20.0
-        print 'FPGA1: Mean=%.3f RMS=%.3f Min=%d Max=%d' % s1
-        print '       Add %.1f dB attenuation (for target RMS %.1f)' \
-                % (20.0*(math.log10(s1[1]) - math.log10(target_rms)), \
-                target_rms)
-        print 'FPGA3: Mean=%.3f RMS=%.3f Min=%d Max=%d' % s3
-        print '       Add %.1f dB attenuation (for target RMS %.1f)' \
-                % (20.0*(math.log10(s3[1]) - math.log10(target_rms)), \
-                target_rms)
+
+        # Avoid the singularity.
+        s1[1] = s1[1] or 0.0000000000001
+        s3[1] = s3[1] or 0.0000000000001
+
+        s1 = tuple(s1)
+        s3 = tuple(s3)
+
+        diff1 = 20.0*(math.log10(s1[1]) - math.log10(target_rms))
+        diff3 = 20.0*(math.log10(s3[1]) - math.log10(target_rms))
+        if (diff1 < 0.0):
+            verb1 = 'Remove'
+            diff1 = -1.0 * diff1
+        else:
+            verb1 = 'Add'
+        if (diff3 < 0.0):
+            verb3 = 'Remove'
+            diff3 = -1.0 * diff3
+        else:
+            verb3 = 'Add'
+        print 'FPGA1 (CM5): Mean=%.3f RMS=%.3f Min=%d Max=%d' % s1
+        print '       %s %.1f dB attenuation (for target RMS %.1f)' \
+                % (verb1, diff1, target_rms)
+        print 'FPGA3 (CM1): Mean=%.3f RMS=%.3f Min=%d Max=%d' % s3
+        print '       %s %.1f dB attenuation (for target RMS %.1f)' \
+                % (verb3, diff3, target_rms)
         pylab.plot(x[1:]-0.5, h1, label='FPGA1')
         pylab.plot(x[1:]-0.5, h3, label='FPGA3')
         pylab.legend()
