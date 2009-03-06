@@ -57,6 +57,7 @@ def set_prompt(prompt, sentinel = '>', spacer = True):
         sys.ps1 += ' '
         sys.ps2 += ' '
 
+# This may ignore useful completion items; unignore or use unregister instead.
 completer.ignore(globals())
 completer.ignore(locals())
 
@@ -68,6 +69,47 @@ parameters = cicada.parameters
 profiles = cicada.profiles
 load = cicada.load
 unload = cicada.unload
+
+def update_completer():
+    '''Quick and dirty update function for the completer.
+    '''
+    completer.set_parameters(get())
+
+    '''
+    profiles_available = []
+    profiles_running = []
+
+    for token in profiles():
+        profile, status = token.split(',')
+        if status in ('a'):
+            profiles_available.append(profile)
+        elif status in ('r', 'u'):
+            profiles_running.append(profile)
+    '''
+    profiles_available = cicada.load()
+    profiles_running = cicada.unload()
+
+    profiles_available.sort()
+    profiles_running.sort()
+    completer.set_profiles(profiles_available, profiles_running)
+
+completer.ignore('update_completer')
+
+def load(*args, **kwargs):
+    result = cicada.load(*args, **kwargs)
+    update_completer()
+    return result
+
+load.__doc__ = cicada.load.__doc__
+load.__name__ = cicada.load.__name__
+
+def unload(*args, **kwargs):
+    result = cicada.unload(*args, **kwargs)
+    update_completer()
+    return result
+
+unload.__doc__ = cicada.unload.__doc__
+unload.__name__ = cicada.unload.__name__
 
 completer.ignore('parameters') # not ready yet
 
@@ -139,3 +181,9 @@ completer.unregister(['thisdir'
                       , 'math'
                       , 'pylab'
                       ])
+
+update_completer()
+
+# To do: see if FEW delims is the way to go.
+delims = '= '
+readline.set_completer_delims(delims)

@@ -376,7 +376,7 @@ class Completer:
             for function in sequence:
                 self.ignore(function)
 
-        if function:
+        if function and function not in self.get_ignored():
             self.get_ignored().append(function)
 
     def get_ignored(self):
@@ -438,7 +438,7 @@ class Completer:
         ['two']
         >>> 
         '''
-        return [f for f in self.get_functions() if f.startswith(text)]
+        return [f + '(' for f in self.get_functions() if f.startswith(text)]
 
     def complete(self, text, state):
         '''Return the next possible completion for 'text'.
@@ -448,21 +448,41 @@ class Completer:
         returns None.  The completion should begin with text.
         '''
         if state == 0:
+            # Hack in something that works for now.
             if '(' not in text:
                 self.matches = self.function_matches(text)
             else:
-                function, blob = text.split('(', maxsplit = 1)
+                if text.endswith(') '):
+                    return None
 
-                formats = self.get_syntax(function)
+                func, blob = text.split('(', 1)
+
+                param = blob.replace("'", '')
+                if func in ('get',):
+                    self.matches = [func + '(' + "'" + p + "') " for p in
+                                    self.get_parameters() if p.startswith(param)]
+                elif func in ('set',):
+                    self.matches = [func + '(' + "'" + p + "', " for p in
+                                    self.get_parameters() if p.startswith(param)]
+                elif func in ('load',):
+                    self.matches = [func + '(' + "'" + p + "') " for p in
+                                    self.get_profiles_a() if p.startswith(param)]
+                elif func in ('unload',):
+                    self.matches = [func + '(' + "'" + p + "') " for p in
+                                    self.get_profiles_r() if p.startswith(param)]
+
+                # Work on something much sexier.
+                '''
+                formats = self.get_syntax(func)
                 if not formats:
-                    self.matches = [function]
+                    self.matches = [func]
 
                 for syntax in formats:
                     blob
 
 
                 # Determine quote character and start of argument.
-                
+                '''
                 
         try:
             return self.matches[state]
