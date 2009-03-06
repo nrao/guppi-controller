@@ -451,10 +451,10 @@ class Completer:
             # Hack in something that works for now.
             if '(' not in text:
                 self.matches = self.function_matches(text)
+            elif text.endswith(')'):
+                self.matches = []
+                return None
             else:
-                if text.endswith(') '):
-                    return None
-
                 func, blob = text.split('(', 1)
 
                 param = blob.replace("'", '')
@@ -487,6 +487,7 @@ class Completer:
         try:
             return self.matches[state]
         except IndexError:
+            self.matches = []
             return None
 
 
