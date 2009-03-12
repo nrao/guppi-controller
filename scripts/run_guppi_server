@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source /opt/64bit/guppi/guppi.bash > /dev/null
+echo -n "running guppi server "
+date
+exec guppi_server controller $@

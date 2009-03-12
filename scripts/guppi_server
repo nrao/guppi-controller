@@ -25,7 +25,7 @@ try:
 except ImportError:
     from guppi.agent_server import AgentServer
 
-agent_module = 'agent_sim'
+agent_module = 'controller'
 if len(sys.argv) > 1:
     agent_module = sys.argv[1]
 
