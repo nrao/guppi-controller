@@ -1,8 +1,9 @@
 import re
 import socket
+from agent import Agent
 
-class Synth(Agent):
-    def __init__(self, addr=('169.254.128.30', 1234)):
+class SynthAgent(Agent):
+    def __init__(self, addr=('169.254.128.25', 1234)):
         self.__addr = addr
         self.__keys = ['CFRQ', 'RFLV']
         self.__term = '\n'
@@ -38,6 +39,32 @@ class Synth(Agent):
         return result
 
     def set(self, keys, values):
+        """Alternate set.
+
+        Attmempts to ensure that the value was set correctly.
+        """
+        #!!! Stress test
+        result = []
+        for key, value in zip(keys, values):
+            key = key.replace('/', ':')
+            self._send('%s %s' % (key, value))
+            test = self.get([key])[0]
+            if key.find(':') < 0:
+                regex = re.compile('[0-9]+\.[0-9]+;', re.IGNORECASE)
+                match = regex.search(test)
+                if match:
+                    test = match.group()
+                    tmp = value.replace('M', '000000').strip('HhZz')
+                    result.append(
+                        str(float(tmp) == float(test[:-1])))
+                else:
+                    result.append('False')
+            else:
+                tmp = value.replace('M', '000000').strip('Hz')
+                result.append(str(float(tmp) == float(test)))
+        return result
+
+    def set2(self, keys, values):
         """Basic set.
 
         Does not ensure that the value was set correctly, only that it is sent.
@@ -49,27 +76,4 @@ class Synth(Agent):
             result.append('True')
         return result
 
-    def set2(self, keys, values):
-        """Alternate set.
-
-        Alternate set which attmempts to ensure that the value was set correctly.
-        """
-        # Replaces '/' with ':' in keys and tests to ensure the value
-        # is set properly
-        #!!! Test this to make sure it works!
-        result = []
-        for key, value in zip(keys, values):
-            key = key.replace('/', ':')
-            self._send('%s %s' % (key, value))
-            test = self.get([key])
-            if not key.endswith('/VALUE'):
-                regex = re.compile(':VALUE [0-9]+\.[0-9]+;', re.IGNORECASE)
-                match = regex.search(test)
-                if match:
-                    test = match.group()
-                    result.append(float(value) == float(test[7:test.index(';')]))
-                else:
-                    result.append('False')
-            else:
-                result.append(float(value) == float(test))
-        return result
+#AgentClass = SynthAgent
