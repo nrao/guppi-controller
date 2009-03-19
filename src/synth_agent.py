@@ -3,9 +3,9 @@ import socket
 from agent import Agent
 
 class SynthAgent(Agent):
-    def __init__(self, addr=('169.254.128.25', 1234)):
+    def __init__(self, addr=('gpib_adapter', 1234)):
         self.__addr = addr
-        self.__keys = ['CFRQ', 'RFLV']
+        self.__keys = ['CFRQ/VALUE'] # ['CFRQ', 'RFLV', 'CFRQ/VALUE']
         self.__term = '\n'
 
     def _recv(self):

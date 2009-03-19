@@ -1,9 +1,9 @@
 import re
 from telnetconnection import TelnetConnection
-from agent import Agent
+from agent import Agent, index
 
 class PowerstripAgent(Agent):
-    def __init__(self, host, port=None):
+    def __init__(self, host='power_strip', port=None):
         self.__conn = TelnetConnection(host, port)
         self.__conn.write('guppi\r')
         self.__conn.write('guppi\r')
@@ -13,12 +13,12 @@ class PowerstripAgent(Agent):
         # (i.e., sending a space breaks the parsing on the box)
         self.__conn.write('\x08') # ASCII backspace
         self.__kwds = ['outlet/1', 'outlet/2', 'outlet/3', 'outlet/4',
-                       'outlet/5', 'outlet/6', 'outlet/7', 'outlet/8',
-                       'group/ibobs']
+                       'outlet/5', 'outlet/6', 'outlet/7', 'outlet/8'] #,
+                       # 'group/ibobs'] # not ready yet
 
-    def get(self, keys=[]):
+    def get(self, keys=index):
         result = []
-        if keys == []:
+        if keys == index:
             result += self.__kwds[:]
         else:
             for k in keys:
