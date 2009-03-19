@@ -42,6 +42,19 @@ def init():
     verbose_set('BEE2/FPGA3/DC_SAMP_EN', '00000001')
     verbose_set('BEE2/FPGA3/DC_BINS_EN', '00000001')
 
+def reset(synth_freq):
+    print 'bofs = unload()'
+    bofs = unload()
+    print 'unload(bofs)'
+    unload(bofs)
+    verbose_set('SYNTH/CFRQ/VALUE', synth_freq)
+    verbose_set(['POWER/outlet/1', 'POWER/outlet/2'], ['Off', 'Off'])
+    verbose_set(['POWER/outlet/1', 'POWER/outlet/2'], ['On', 'On'])
+    print 'load(bofs)'
+    load(bofs)
+    print 'init()'
+    init()
+
 def snapshot_bins(brams, limit = 512):
     bins = []
     count = 0
