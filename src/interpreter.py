@@ -1,3 +1,4 @@
+
 # Copyright (C) 2008 Associated Universities, Inc. Washington DC, USA.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -132,7 +133,7 @@ try:
 except:
     pass
 else:
-    print 'functions:'
+    print 'core functions:'
     for func in completer.get_functions(): print '   ', func
     del func
     print

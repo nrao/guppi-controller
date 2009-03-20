@@ -1,5 +1,6 @@
 from binascii import hexlify
 import numpy
+from time import sleep
 
 try:
     from utility import generate_mask, xstr2float, float2xstr
@@ -42,7 +43,7 @@ def init():
     verbose_set('BEE2/FPGA3/DC_SAMP_EN', '00000001')
     verbose_set('BEE2/FPGA3/DC_BINS_EN', '00000001')
 
-def reset(synth_freq = None):
+def reset(synth_freq = None, wait = 3):
     print 'bofs = unload()'
     bofs = unload()
     print 'unload(bofs)'
@@ -50,6 +51,7 @@ def reset(synth_freq = None):
     if synth_freq:
         verbose_set('SYNTH/CFRQ/VALUE', synth_freq)
     verbose_set(['POWER/outlet/1', 'POWER/outlet/2'], ['Off', 'Off'])
+    sleep(wait)
     verbose_set(['POWER/outlet/1', 'POWER/outlet/2'], ['On', 'On'])
     print 'load(bofs)'
     load(bofs)
