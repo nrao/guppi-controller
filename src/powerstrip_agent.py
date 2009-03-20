@@ -8,8 +8,8 @@ class PowerstripAgent(Agent):
         self.__port = port
         self.__conn = TelnetConnection()
         self.__kwds = ['outlet/1', 'outlet/2', 'outlet/3', 'outlet/4',
-                       'outlet/5', 'outlet/6', 'outlet/7', 'outlet/8'] #,
-                       # 'group/ibobs'] # not ready yet
+                       'outlet/5', 'outlet/6', 'outlet/7', 'outlet/8',
+                       'group/ibobs'] # not ready yet
 
     def _open(self):
         self.__conn.open(self.__host, self.__port)

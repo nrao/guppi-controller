@@ -50,9 +50,9 @@ def reset(synth_freq = None, wait = 3):
     unload(bofs)
     if synth_freq:
         verbose_set('SYNTH/CFRQ/VALUE', synth_freq)
-    verbose_set(['POWER/outlet/1', 'POWER/outlet/2'], ['Off', 'Off'])
+    verbose_set('POWER/group/ibobs', 'Off')
     sleep(wait)
-    verbose_set(['POWER/outlet/1', 'POWER/outlet/2'], ['On', 'On'])
+    verbose_set('POWER/group/ibobs', 'On')
     print 'load(bofs)'
     load(bofs)
     print 'init()'
