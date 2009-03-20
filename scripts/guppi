@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # Accept command-line arguments.  Run interactively.
-/usr/bin/env python -i -c 'from guppi.interpreter import *' $@
+exec /usr/bin/env python -i -c 'from guppi.interpreter import *' $@
