@@ -44,7 +44,7 @@ def init():
     verbose_set('BEE2/FPGA3/DC_BINS_EN', '00000001')
 
 def reset(synth_freq = None, wait = 3):
-    freq_check = int(synth_freq.strip('MmHhZz'))
+    freq_check = float(synth_freq.strip('MmHhZz'))
     if freq_check > 1000000:
         print 'usage: reset(synth_freq)'
         print 'synth_freq should be given in MHz'
