@@ -44,6 +44,13 @@ def init():
     verbose_set('BEE2/FPGA3/DC_BINS_EN', '00000001')
 
 def reset(synth_freq = None, wait = 3):
+    freq_check = int(synth_freq.strip('MmHhZz'))
+    if freq_check > 1000000:
+        print 'usage: reset(synth_freq)'
+        print 'synth_freq should be given in MHz'
+        print 'did you mean to provide', freq_check / 1000000, '??'
+        return
+
     print 'bofs = unload()'
     bofs = unload()
     print 'unload(bofs)'
@@ -51,6 +58,7 @@ def reset(synth_freq = None, wait = 3):
     if synth_freq:
         verbose_set('SYNTH/CFRQ/VALUE', synth_freq)
     verbose_set('POWER/group/ibobs', 'Off')
+    print '(waiting', wait, 'seconds)'
     sleep(wait)
     verbose_set('POWER/group/ibobs', 'On')
     print 'load(bofs)'

@@ -33,7 +33,13 @@ class SynthAgent(Agent):
                 self._send(str(key).replace('/', ':') + '?')
                 #!!! More logic is probably necessary to filter
                 #!!! what comes back
-                result.append(self._recv().strip(': \n'))
+
+                # Default to MHz for center freq. value.
+                received = self._recv().strip(': \n')
+                if key == 'CFRQ/VALUE':
+                    result.append(re.sub('000000.0$', '', received, 1) + 'MHz')
+                else:
+                    result.append(received)
         else:
             result = self.__keys
         return result
@@ -46,6 +52,9 @@ class SynthAgent(Agent):
         #!!! Stress test
         result = []
         for key, value in zip(keys, values):
+            # Default to MHz for center freq. value.
+            if key == 'CFRQ/VALUE':
+                value = value.strip('MmHhZz') + '000000'
             key = key.replace('/', ':')
             self._send('%s %s' % (key, value))
             test = self.get([key])[0]
