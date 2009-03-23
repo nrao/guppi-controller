@@ -12,7 +12,7 @@ class SynthAgent(Agent):
         data = ''
         conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         conn.connect(self.__addr)
-        conn.settimeout(1)
+        conn.settimeout(5)
         conn.send('++read' + self.__term)
         while data.find(self.__term) < 0:
             data += conn.recv(1024)
@@ -30,6 +30,7 @@ class SynthAgent(Agent):
         result = []
         if keys != ['index']:
             for key in keys:
+                if key.find('/') < 0: key += '/VALUE'
                 self._send(str(key).replace('/', ':') + '?')
                 #!!! More logic is probably necessary to filter
                 #!!! what comes back
@@ -39,15 +40,15 @@ class SynthAgent(Agent):
         return result
 
     def set(self, keys, values):
-        """Alternate set.
+        """'Advanced' set.
 
-        Attmempts to ensure that the value was set correctly.
+        Attmempts to ensure that the value was set correctly by writing
+        then reading back and checking the value against the request.
         """
         #!!! Stress test
         result = []
         for key, value in zip(keys, values):
-            key = key.replace('/', ':')
-            self._send('%s %s' % (key, value))
+            self._send('%s %s' % (key.replace('/', ':'), value))
             test = self.get([key])[0]
             if key.find(':') < 0:
                 regex = re.compile('[0-9]+\.[0-9]+;', re.IGNORECASE)
@@ -60,7 +61,7 @@ class SynthAgent(Agent):
                 else:
                     result.append('False')
             else:
-                tmp = value.replace('M', '000000').strip('Hz')
+                tmp = value.replace('M', '000000').strip('HhZz')
                 result.append(str(float(tmp) == float(test)))
         return result
 
@@ -76,4 +77,4 @@ class SynthAgent(Agent):
             result.append('True')
         return result
 
-#AgentClass = SynthAgent
+AgentClass = SynthAgent
