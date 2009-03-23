@@ -38,7 +38,7 @@ class Client(Agent):
         self._client = agent_client.AgentClient(*args, **kwargs)
 
     def arm(self):
-        self._client.arm()
+        return self._client.arm()
 
     def get(self, keys = index):
         if isinstance(keys, str):
