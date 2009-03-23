@@ -34,13 +34,19 @@ class SynthAgent(Agent):
                 self._send(str(key).replace('/', ':') + '?')
                 #!!! More logic is probably necessary to filter
                 #!!! what comes back
-                result.append(self._recv().strip(': \n'))
+                #result.append(self._recv().strip(': \n'))
+                # Default to MHz for center freq. value.
+                received = self._recv().strip(': \n')
+                if key == 'CFRQ/VALUE':
+                    result.append(re.sub('000000.0$', '', received, 1) + 'MHz')
+                else:
+                    result.append(received)
         else:
             result = self.__keys
         return result
 
     def set(self, keys, values):
-        """'Advanced' set.
+        """Alternate set.
 
         Attmempts to ensure that the value was set correctly by writing
         then reading back and checking the value against the request.
@@ -48,7 +54,12 @@ class SynthAgent(Agent):
         #!!! Stress test
         result = []
         for key, value in zip(keys, values):
-            self._send('%s %s' % (key.replace('/', ':'), value))
+            #self._send('%s %s' % (key.replace('/', ':'), value))
+            # Default to MHz for center freq. value.
+            if key == 'CFRQ/VALUE':
+                value = value.strip('MmHhZz') + '000000'
+            key = key.replcace('/', ':')
+            self._send('%s %s' % (key, value))
             test = self.get([key])[0]
             if key.find(':') < 0:
                 regex = re.compile('[0-9]+\.[0-9]+;', re.IGNORECASE)
@@ -77,4 +88,4 @@ class SynthAgent(Agent):
             result.append('True')
         return result
 
-AgentClass = SynthAgent
+#AgentClass = SynthAgent
