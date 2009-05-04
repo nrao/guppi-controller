@@ -4,6 +4,7 @@
 import os
 
 lineup = ['utils.py'
+          'modes.py',
           # , 'one.py'
           # , 'two.py'
           ]
