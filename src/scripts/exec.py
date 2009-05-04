@@ -3,11 +3,9 @@
 
 import os
 
-lineup = ['utils.py'
+lineup = ('utils.py',
           'modes.py',
-          # , 'one.py'
-          # , 'two.py'
-          ]
+          )
 
 for script in lineup:
     try:
