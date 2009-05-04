@@ -21,6 +21,7 @@ import os
 import re
 import readline
 import sys
+import time
 
 from client import Client
 from agent import index
@@ -98,7 +99,8 @@ completer.ignore('update_completer')
 
 def load(*args, **kwargs):
     result = cicada.load(*args, **kwargs)
-    update_completer()
+    if args:
+        update_completer()
     return result
 
 load.__doc__ = cicada.load.__doc__
@@ -106,7 +108,10 @@ load.__name__ = cicada.load.__name__
 
 def unload(*args, **kwargs):
     result = cicada.unload(*args, **kwargs)
-    update_completer()
+    if args:
+        # Give hardware some time before updating the completer.
+        time.sleep(3)
+        update_completer()
     return result
 
 unload.__doc__ = cicada.unload.__doc__
