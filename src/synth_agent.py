@@ -58,10 +58,9 @@ class SynthAgent(Agent):
             # Default to MHz for center freq. value.
             if key == 'CFRQ/VALUE':
                 value = value.strip('MmHhZz') + '000000'
-            key = key.replace('/', ':')
-            self._send('%s %s' % (key, value))
-            test = self.get([key])[0]
-            if key.find(':') < 0:
+            self._send('%s %s' % (key.replace('/', ':'), value))
+            test = self.get([key])[0].replace('M', '000000').strip('HhZz')
+            if key.find('/') < 0:
                 regex = re.compile('[0-9]+\.[0-9]+;', re.IGNORECASE)
                 match = regex.search(test)
                 if match:
