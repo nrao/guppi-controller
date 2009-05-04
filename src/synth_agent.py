@@ -12,7 +12,7 @@ class SynthAgent(Agent):
         data = ''
         conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         conn.connect(self.__addr)
-        conn.settimeout(5)
+        conn.settimeout(10)
         conn.send('++read' + self.__term)
         while data.find(self.__term) < 0:
             data += conn.recv(1024)
@@ -58,7 +58,7 @@ class SynthAgent(Agent):
             # Default to MHz for center freq. value.
             if key == 'CFRQ/VALUE':
                 value = value.strip('MmHhZz') + '000000'
-            key = key.replcace('/', ':')
+            key = key.replace('/', ':')
             self._send('%s %s' % (key, value))
             test = self.get([key])[0]
             if key.find(':') < 0:
