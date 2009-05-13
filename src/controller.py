@@ -42,4 +42,7 @@ class Controller(Agent):
         result = set_result == success and clr_result == success
         return (str(result),)
 
+    def update_with_gbtstatus(self):
+        return self.boards.update_with_gbtstatus()
+
 AgentClass = Controller

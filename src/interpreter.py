@@ -72,6 +72,8 @@ profiles = cicada.profiles
 load = cicada.load
 unload = cicada.unload
 
+update_with_gbtstatus = cicada.update_with_gbtstatus
+
 def update_completer():
     '''Quick and dirty update function for the completer.
     '''

@@ -56,4 +56,12 @@ class DaqAgent(Agent):
         pass
         return failure
 
+    def update_with_gbtstatus(self):
+        try:
+            self.status.update_with_gbtstatus()
+        except:
+            return failure
+        else:
+            return success
+
 AgentClass = DaqAgent

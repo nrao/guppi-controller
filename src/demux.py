@@ -363,4 +363,7 @@ class Demux(Agent):
         raise NotImplementedError("virtual method not implemented in class %s"\
                                   % self.__class__.__name__)
 
+    def update_with_gbtstatus(self):
+        return self.clients['DAQ'].update_with_gbtstatus()
+
 AgentClass = Demux
