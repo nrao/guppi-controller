@@ -44,6 +44,7 @@ def init():
     verbose_set('BEE2/FPGA3/DC_BINS_EN', '00000001')
 
 def reset(synth_freq = None, wait = 3):
+    """Reset guppi's synthesizer to the frequency given in MHz."""
     # Allow synth_freq to be None
     synth_freq = synth_freq or "0" # clean out False, None
     synth_freq = str(synth_freq)   # ensure is string
@@ -120,6 +121,10 @@ def print_reg():
         v = get(k)
         if 0 < len(v) < 32:
             print k, '\t', v
+
+def set_acc_len(acc_len):
+    """Sets ACC_LENGTH properly given the integer number of spectra to be summed."""
+    verbose_set('BEE2/FPGA2/ACC_LENGTH', '%x'%(int(acc_len)-1))
 
 try:
     import math
