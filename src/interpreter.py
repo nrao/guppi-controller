@@ -20,8 +20,11 @@ __license__ = "GPL"
 import os
 import re
 import readline
+import socket
 import sys
 import time
+
+from soaplib.serializers.primitive import Fault
 
 from client import Client
 from agent import index
@@ -44,6 +47,7 @@ del path, environ
 
 # Establish client.
 # cicada = Client(host = 'bee2')
+
 cicada = Client()
 completer = Completer()
 
@@ -73,6 +77,12 @@ load = cicada.load
 unload = cicada.unload
 
 update_with_gbtstatus = cicada.update_with_gbtstatus
+
+try:
+    get()
+except socket.error, e:
+    print 'Connection Error'
+    sys.exit(1)
 
 def update_completer():
     '''Quick and dirty update function for the completer.
@@ -176,6 +186,37 @@ except:
 else:
     print 'Successfully added custom scripts.'
     pass
+
+# Decorate core functions for better fault printing.
+def error_result(*args, **kwargs):
+    if len(args) < 1:
+        return ['Error']
+    arg = args[0]
+    if isinstance(arg, tuple) or isinstance(arg, list):
+        return ['Error' for item in arg]
+    return 'Error'
+
+def handle_soap_fault(function):
+    def wrapped(*args, **kwargs):
+        try:
+            return function(*args, **kwargs)
+        except Fault, e:
+            print '%s: %s' % (e.faultcode, e.faultstring)
+            return error_result(*args, **kwargs)
+        except socket.error, e:
+            print 'Connection Error.'
+            return error_result(*args, **kwargs)
+    wrapped.__name__ = function.__name__
+    wrapped.__doc__ = function.__doc__
+    return wrapped
+
+get = handle_soap_fault(get)
+set = handle_soap_fault(set)
+load = handle_soap_fault(load)
+unload = handle_soap_fault(unload)
+
+arm = handle_soap_fault(arm)
+update_with_gbtstatus = handle_soap_fault(update_with_gbtstatus)
 
 completer.accept(globals())
 

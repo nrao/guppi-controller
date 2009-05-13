@@ -27,6 +27,7 @@ class DaqAgent(Agent):
         if keys == index:
             return self.status.keys()
 
+        self.status.read()
         return [str(self.status[key]) for key in keys]
 
     def set(self, keys, values):
@@ -59,6 +60,8 @@ class DaqAgent(Agent):
     def update_with_gbtstatus(self):
         try:
             self.status.update_with_gbtstatus()
+            # commit updates
+            self.status.write()
         except:
             return failure
         else:

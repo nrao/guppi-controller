@@ -60,7 +60,7 @@ def reset(synth_freq = None, wait = 3):
     bofs = unload()
     print 'unload(bofs)'
     unload(bofs)
-    if synth_freq:
+    if synth_freq and synth_freq != "0":
         verbose_set('SYNTH/CFRQ/VALUE', synth_freq)
     verbose_set('POWER/group/ibobs', 'Off')
     print '(waiting', wait, 'seconds)'
