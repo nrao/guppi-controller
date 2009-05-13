@@ -156,8 +156,8 @@ else:
             if refresh: dum=get()
             d1 = numpy.append(d1, get_adc_samples(fpga=1,signed=True))
             d3 = numpy.append(d3, get_adc_samples(fpga=3,signed=True))
-        (h1,x) = numpy.histogram(d1,bins=128,range=(-128,128),new=True)
-        (h3,x) = numpy.histogram(d3,bins=128,range=(-128,128),new=True)
+        (h1,x) = numpy.histogram(d1,bins=128,range=(-128,128))
+        (h3,x) = numpy.histogram(d3,bins=128,range=(-128,128))
         s1 = [d1.mean(), d1.std(), d1.min(), d1.max()]
         s3 = [d3.mean(), d3.std(), d3.min(), d3.max()]
         target_rms = 20.0
