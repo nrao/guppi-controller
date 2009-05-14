@@ -88,7 +88,7 @@ class Bee2Utils:
 
     def readFile(self, filename):
         """Reads from the specified file."""
-        result = 'KeyError'
+        result = 'Error'
         try:
             # Make sure there are no file errors before writing the result
             fd = open(filename, 'r')

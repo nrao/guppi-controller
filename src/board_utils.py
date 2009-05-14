@@ -113,7 +113,7 @@ class BoardUtils:
 
     def readRegister(self, register):
         """Reads a value from the specified register."""
-        result = 'KeyError'
+        result = 'Error'
         if register.count('/') == 1:
             fpga, filename = register.split('/')
             info = list(self.__sysutils.getProcInfo(fpga))

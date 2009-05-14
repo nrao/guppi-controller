@@ -113,7 +113,7 @@ class Demux(Agent):
         synth_keys = [key.replace('SYNTH/', '') for key in client_keys['SYNTH']]
         synth_values = self.clients['SYNTH'].get(synth_keys)
         none_keys = client_keys['']
-        none_values = ['KeyError' for i in range(len(none_keys))]
+        none_values = ['Error' for i in range(len(none_keys))]
 
         # build result
         client_values = {'BEE2': bee2_values,
@@ -265,7 +265,7 @@ class Demux(Agent):
             daq_values = self.clients['DAQ'].load(daq_keys)
         daq_values = [daq_values[0] for i in range(len(client_keys['DAQ']))]
         none_keys = client_keys['']
-        none_values = ['KeyError' for i in range(len(none_keys))]
+        none_values = ['Error' for i in range(len(none_keys))]
 
         # build result
         client_values = {'BEE2': bee2_values,
@@ -319,7 +319,7 @@ class Demux(Agent):
             daq_values = self.clients['DAQ'].unload(daq_keys)
         daq_values = [daq_values[0] for i in range(len(client_keys['DAQ']))]
         none_keys = client_keys['']
-        none_values = ['KeyError' for i in range(len(none_keys))]
+        none_values = ['Error' for i in range(len(none_keys))]
 
         # build result
         client_values = {'BEE2': bee2_values,
