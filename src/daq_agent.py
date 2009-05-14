@@ -20,17 +20,27 @@ from agent import Agent, index, success, failure
 from guppi_daq.guppi_utils import guppi_status
 
 class DaqAgent(Agent):
-    def __init__(self):
+    status = None
+
+    def _open(self):
         self.status = guppi_status()
 
-    def get(self, keys = index):
-        if keys == index:
-            return self.status.keys()
+    def _close(self):
+        del self.status
+        self.status = None
 
+    def get(self, keys = index):
+        self._open()
         self.status.read()
-        return [str(self.status[key]) for key in keys]
+        if keys == index:
+            result = self.status.keys()
+        else:
+            result = [str(self.status[key]) for key in keys]
+        self._close()
+        return result
 
     def set(self, keys, values):
+        self._open()
         result = []
         for i in range(len(keys)):
             key = keys[i]
@@ -44,6 +54,7 @@ class DaqAgent(Agent):
                 result += success
         # commit updates
         self.status.write()
+        self._close()
         return result
 
     def load(self, keys = index):
