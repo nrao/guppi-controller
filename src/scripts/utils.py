@@ -95,7 +95,7 @@ def unbram(bram, value_nibbles = 2):
         result += [bram[i:i+value_nibbles]]
     return result
 
-def get_adc_samples(fpga=1, signed=True):
+def get_adc_samples(fpga=1, signed=True, fix_count=True):
     """Retrieve raw ADC samples from the specified signal path.
 
     Keyword arguments:
@@ -107,6 +107,22 @@ def get_adc_samples(fpga=1, signed=True):
     vals = unbram(get(prefix + 'DC_HI_SAMP_BRAM'))
     vals += unbram(get(prefix + 'DC_LO_SAMP_BRAM'))
     vals = [int(v, 16) for v in vals]
+
+    if fix_count:
+        vals32 = unbram(get(prefix + 'DC_HI_SAMP_BRAM'),8)
+        vals32 += unbram(get(prefix + 'DC_LO_SAMP_BRAM'),8)
+        vals32 = [int(v, 16) for v in vals32]
+        for i in range(len(vals32)):
+            vals32[i] &= 0xFFFFFFF0  # Kill 4-bit counter
+            vals32[i] >>= 3
+            vals[4*i] = vals32[i] & 0xFF
+            vals32[i] >>= 7
+            vals[4*i+1] = vals32[i] & 0xFE
+            vals32[i] >>= 7
+            vals[4*i+2] = vals32[i] & 0xFE
+            vals32[i] >>= 7
+            vals[4*i+3] = vals32[i] & 0xFE
+
     if signed: 
         vals = numpy.int8(vals)
     else:
@@ -150,12 +166,16 @@ else:
         pylab.show()
 
     def plot_adc_hist(ngrab=1, refresh=True):
+        if get('BEE2/FPGA1/DESIGN_ID') == '7a127791':
+            fix_count=True
+        else:
+            fix_count=False
         d1 = numpy.ndarray(0, dtype=numpy.int8)
         d3 = numpy.ndarray(0, dtype=numpy.int8)
         for i in range(ngrab):
             if refresh: dum=get()
-            d1 = numpy.append(d1, get_adc_samples(fpga=1,signed=True))
-            d3 = numpy.append(d3, get_adc_samples(fpga=3,signed=True))
+            d1 = numpy.append(d1, get_adc_samples(fpga=1,signed=True,fix_count=fix_count))
+            d3 = numpy.append(d3, get_adc_samples(fpga=3,signed=True,fix_count=fix_count))
         (h1,x) = numpy.histogram(d1,bins=128,range=(-128,128))
         (h3,x) = numpy.histogram(d3,bins=128,range=(-128,128))
         s1 = [d1.mean(), d1.std(), d1.min(), d1.max()]
