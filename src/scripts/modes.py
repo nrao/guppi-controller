@@ -15,14 +15,21 @@ guppi_modelist = {
             ],
         'new_1sfa': [
             'BEE2/bGOUT_U2_2048_1SFA_P00_fpga2_2009_Jun_04_1032.bof',
-            'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_04_0759.bof',
+            #'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_04_0759.bof',
+            'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_15_1455.bof',
             'BEE2/bGDSP_U1_2048_1248_P00_fpga1_2009_Jun_03_1645.bof',
             'BEE2/bGDSP_U3_2048_1248_P00_fpga3_2009_Jun_03_1725.bof'
             ]
         }
 
-def mode(modename):
+def mode(modename="none"):
     """Load a GUPPI hardware mode (set of bof files) from a predefined list."""
+
+    # If no arg was given, print list of choices
+    if modename == "none":
+        print "Valid modes: ", guppi_modelist.keys()
+        return 
+
     # Check if modename is valid
     if not modename in guppi_modelist:
         print "Unknown mode: '%s'" % modename
