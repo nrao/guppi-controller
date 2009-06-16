@@ -11,14 +11,20 @@ def verbose_set(key, value):
     """Performs a set operation with formatted output."""
     print 'set', key, 'to', value, '...', set(key, value)
     
-def init():
+def init(mode="old"):
     """Initializes registers to their default values."""
-    verbose_set('BEE2/FPGA1/FFT_SHIFT', 'aaaaaaaa')
-    verbose_set('BEE2/FPGA1/LE_CNTRL', '00000000')
-    verbose_set('BEE2/FPGA1/SAMP_CMD', '00000000')
-    verbose_set('BEE2/FPGA1/DC_SAMP_EN', '00000001')
-    verbose_set('BEE2/FPGA1/DC_BINS_EN', '00000001')
-    
+
+    # FPGAs 1 and 3 always have the same settings
+    for fpga in ["FPGA1", "FPGA3"]:
+        verbose_set('BEE2/%s/FFT_SHIFT' % fpga, 'aaaaaaaa')
+        if mode == "1sfa":
+            verbose_set('BEE2/%s/DC_EN' % fpga, '00000001')
+        else:
+            verbose_set('BEE2/%s/LE_CNTRL' % fpga, '00000000')
+            verbose_set('BEE2/%s/SAMP_CMD' % fpga, '00000000')
+            verbose_set('BEE2/%s/DC_SAMP_EN' % fpga, '00000001')
+            verbose_set('BEE2/%s/DC_BINS_EN' % fpga, '00000001')
+        
     verbose_set('BEE2/FPGA2/GUPPi_PIPES_ARM', '00000000')
     verbose_set('BEE2/FPGA2/OFFSET_I', '00000000')
     verbose_set('BEE2/FPGA2/OFFSET_Q', '00000000')
@@ -32,16 +38,21 @@ def init():
     verbose_set('BEE2/FPGA2/DEST_IP', 'c0a80307')
     verbose_set('BEE2/FPGA2/DEST_PORT', '0000c350')
     verbose_set('BEE2/FPGA2/DC_BINS_EN', '00000001')
+    if mode == "1sfa":
+        bw = get('SYNTH/CFRQ/VALUE')
+        bw_sel = '0'
+        guppi_pipes_bw_sel = '2'
+        if bw == '800MHz':
+            bw_sel = '1'
+        if bw == '400MHz':
+            guppi_pipes_bw_sel = '1'
+        verbose_set('BEE2/FPGA2/GUPPi_PIPES_BW_SEL', guppi_pipes_bw_sel)
+        verbose_set('BEE2/FPGA2/BW_SEL', bw_sel)
+        verbose_set('BEE2/FPGA2/ROL_SEL', '0')
     text = 'begin\nmac = 10:10:10:10:10:11\nip = 192.168.3.8\n' + \
            'gateway = 192.168.3.8\nport = 50000\nend\n'
     verbose_set('BEE2/FPGA2/ten_GbE', hexlify(text))
     print 'encoded from:\n%s' % text
-
-    verbose_set('BEE2/FPGA3/FFT_SHIFT', 'aaaaaaaa')
-    verbose_set('BEE2/FPGA3/LE_CNTRL', '00000000')
-    verbose_set('BEE2/FPGA3/SAMP_CMD', '00000000')
-    verbose_set('BEE2/FPGA3/DC_SAMP_EN', '00000001')
-    verbose_set('BEE2/FPGA3/DC_BINS_EN', '00000001')
 
 def reset(synth_freq = None, wait = 3):
     """Reset guppi's synthesizer to the frequency given in MHz."""
