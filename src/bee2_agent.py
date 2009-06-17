@@ -50,11 +50,12 @@ class Bee2Agent(Agent):
         """
         result = []
         if keys != index:
-            # ~0.8 seconds for all keys
             result += [self.__utils.readRegister(reg) for reg in keys]
             # Keep hexlification of registers separate; preserve time coupling
-            # ~0.06 seconds for all keys
-            result = [b2a_hex(r) for r in result]
+            for i in range(len(result)):
+                if result[i] != 'Error':
+                    result[i] = b2a_hex(result[i])
+            #result = [b2a_hex(r) for r in result]
         else:
             result += self.__utils.listRegisters()
         return result

@@ -30,6 +30,9 @@ class SynthAgent(Agent):
         result = []
         if keys != ['index']:
             for key in keys:
+                if key not in self.__keys:
+                    result.append('Error')
+                    continue
                 if key.find('/') < 0: key += '/VALUE'
                 self._send(str(key).replace('/', ':') + '?')
                 #!!! More logic is probably necessary to filter
@@ -38,7 +41,7 @@ class SynthAgent(Agent):
                 # Default to MHz for center freq. value.
                 received = self._recv().strip(': \n')
                 if key == 'CFRQ/VALUE':
-                    result.append(re.sub('000000.0$', '', received, 1) + 'MHz')
+                    result.append(re.sub('000000.0$', 'M', received, 1) + 'Hz')
                 else:
                     result.append(received)
         else:
@@ -46,7 +49,7 @@ class SynthAgent(Agent):
         return result
 
     def set(self, keys, values):
-        """Alternate set.
+        """Sets parameters for the Synthesizer.
 
         Attmempts to ensure that the value was set correctly by writing
         then reading back and checking the value against the request.
@@ -73,18 +76,6 @@ class SynthAgent(Agent):
             else:
                 tmp = value.replace('M', '000000').strip('HhZz')
                 result.append(str(float(tmp) == float(test)))
-        return result
-
-    def set2(self, keys, values):
-        """Basic set.
-
-        Does not ensure that the value was set correctly, only that it is sent.
-        """
-        result = []
-        for key, value in zip(keys, values):
-            key = key.replace('/', ':')
-            self._send('%s %s' % (key, value))
-            result.append('True')
         return result
 
 #AgentClass = SynthAgent
