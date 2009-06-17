@@ -72,6 +72,10 @@ class AgentServer(SimpleWSGISoapApp):
     def update_with_gbtstatus(self):
         return self.agent.update_with_gbtstatus()
 
+    @soapmethod(_returns=Array(String))
+    def gbt_arm(self):
+        return self.agent.gbt_arm()
+
     @soapmethod(String, Integer, Integer, _returns=Float)
     def xstr2float(self, xstr, frac_bits, sign_bit):
         return xstr2float(xstr, frac_bits, sign_bit)

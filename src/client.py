@@ -43,6 +43,9 @@ class Client(Agent):
     def update_with_gbtstatus(self):
         return self._client.update_with_gbtstatus()
 
+    def gbt_arm(self):
+        return self._client.gbt_arm()
+
     def get(self, keys = index):
         if isinstance(keys, str):
             keys = [keys]

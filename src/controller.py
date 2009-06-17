@@ -45,4 +45,11 @@ class Controller(Agent):
     def update_with_gbtstatus(self):
         return self.boards.update_with_gbtstatus()
 
+    def gbt_arm(self):
+        if self.update_with_gbtstatus():
+            time.sleep(0.5)
+            return self.arm()
+        else:
+            return failure
+
 AgentClass = Controller
