@@ -69,13 +69,17 @@ class DaqAgent(Agent):
         return failure
 
     def update_with_gbtstatus(self):
+        self._open()
+        result = failure
         try:
             self.status.update_with_gbtstatus()
             # commit updates
             self.status.write()
         except:
-            return failure
+            result = failure
         else:
-            return success
+            result = success
+        self._close()
+        return result
 
 AgentClass = DaqAgent
