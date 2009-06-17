@@ -52,4 +52,20 @@ class Controller(Agent):
         else:
             return failure
 
+    def power_cycle(self, wait=3):
+        results = []
+        bofs = self.unload()
+        results += self.unload(bofs)
+        results += self.set(['POWER/group/ibobs'], ['Off'])
+        time.sleep(wait)
+        results += self.set(['POWER/group/ibobs'], ['On'])
+        results += self.load(bofs)
+        # for now, just return failure or error if any one failed
+        if 'False' in results:
+            return failure
+        elif 'Error' in results:
+            return ['Error']
+        else:
+            return success
+
 AgentClass = Controller

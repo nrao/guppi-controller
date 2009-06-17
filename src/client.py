@@ -46,6 +46,9 @@ class Client(Agent):
     def gbt_arm(self):
         return self._client.gbt_arm()
 
+    def power_cycle(self):
+        return self._client.power_cycle()
+
     def get(self, keys = index):
         if isinstance(keys, str):
             keys = [keys]

@@ -76,6 +76,12 @@ profiles = cicada.profiles
 load = cicada.load
 unload = cicada.unload
 
+gbt_arm = cicada.gbt_arm
+completer.ignore('gbt_arm')
+
+power_cycle = cicada.power_cycle
+completer.ignore('power_cycle')
+
 update_with_gbtstatus = cicada.update_with_gbtstatus
 
 try:
@@ -217,6 +223,8 @@ unload = handle_soap_fault(unload)
 
 arm = handle_soap_fault(arm)
 update_with_gbtstatus = handle_soap_fault(update_with_gbtstatus)
+gbt_arm = handle_soap_fault(gbt_arm)
+power_cycle = handle_soap_fault(power_cycle)
 
 completer.accept(globals())
 

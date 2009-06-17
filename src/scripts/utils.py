@@ -54,7 +54,7 @@ def init(mode="old"):
     verbose_set('BEE2/FPGA2/ten_GbE', hexlify(text))
     print 'encoded from:\n%s' % text
 
-def reset(synth_freq = None, wait = 3):
+def reset(synth_freq=None, wait=3):
     """Reset guppi's synthesizer to the frequency given in MHz."""
     # Allow synth_freq to be None
     synth_freq = synth_freq or "0" # clean out False, None
@@ -67,18 +67,10 @@ def reset(synth_freq = None, wait = 3):
         print 'did you mean to provide', freq_check / 1000000, '??'
         return
 
-    print 'bofs = unload()'
-    bofs = unload()
-    print 'unload(bofs)'
-    unload(bofs)
     if synth_freq and synth_freq != "0":
         verbose_set('SYNTH/CFRQ/VALUE', synth_freq)
-    verbose_set('POWER/group/ibobs', 'Off')
-    print '(waiting', wait, 'seconds)'
-    sleep(wait)
-    verbose_set('POWER/group/ibobs', 'On')
-    print 'load(bofs)'
-    load(bofs)
+    print 'power_cycle()'
+    power_cycle()
     print 'init()'
     init()
 
