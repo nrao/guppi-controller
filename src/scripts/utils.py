@@ -11,7 +11,7 @@ def verbose_set(key, value):
     """Performs a set operation with formatted output."""
     print 'set', key, 'to', value, '...', set(key, value)
     
-def init(mode="old"):
+def init(mode="1sfa"):
     """Initializes registers to their default values."""
 
     # FPGAs 1 and 3 always have the same settings
@@ -169,7 +169,7 @@ else:
         pylab.show()
 
     def plot_adc_hist(ngrab=1, refresh=True):
-        if get('BEE2/FPGA1/DESIGN_ID') == '7a127791':
+        if get('BEE2/FPGA1/DESIGN_ID') != 'Error':
             fix_count=True
         else:
             fix_count=False

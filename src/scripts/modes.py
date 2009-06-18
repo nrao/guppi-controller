@@ -3,26 +3,33 @@ import sys
 
 # The list of GUPPI modes
 guppi_modelist = {
-        '2048': [
+        'old2048': [
             'BEE2/b2_GOUT_U2_4K_800_A_NR_fpga2_2008_Sep_15_1400.bof',
             'BEE2/b2_GDSP_U1_4K_800_A_XA_fpga1_2008_Jul_30_1356.bof',
             'BEE2/b2_GDSP_U3_4K_800_A_XA_fpga3_2008_Jul_30_1414.bof'
             ],
-        '128_1sfa': [
+        '128': [
             'BEE2/bGOUT_U2_256_1SFA_D26_fpga2_2009_Apr_21_1155.bof',
             'BEE2/bGDSP_U1_256_1248_D20_fpga1_2009_Apr_14_2030.bof',
             'BEE2/bGDSP_U3_256_1248_D20_fpga3_2009_Apr_14_2111.bof'
             ],
-        'new_1sfa': [
+        '2048': [
             'BEE2/bGOUT_U2_2048_1SFA_P00_fpga2_2009_Jun_04_1032.bof',
-            'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_04_0759.bof',
+            #'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_04_0759.bof',
+            'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_15_1455.bof',
             'BEE2/bGDSP_U1_2048_1248_P00_fpga1_2009_Jun_03_1645.bof',
             'BEE2/bGDSP_U3_2048_1248_P00_fpga3_2009_Jun_03_1725.bof'
             ]
         }
 
-def mode(modename):
+def mode(modename="none"):
     """Load a GUPPI hardware mode (set of bof files) from a predefined list."""
+
+    # If no arg was given, print list of choices
+    if modename == "none":
+        print "Valid modes: ", guppi_modelist.keys()
+        return 
+
     # Check if modename is valid
     if not modename in guppi_modelist:
         print "Unknown mode: '%s'" % modename
