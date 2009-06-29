@@ -1,4 +1,3 @@
-
 # Copyright (C) 2008 Associated Universities, Inc. Washington DC, USA.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -75,6 +74,7 @@ parameters = cicada.parameters
 profiles = cicada.profiles
 load = cicada.load
 unload = cicada.unload
+send = cicada.send
 
 gbt_arm = cicada.gbt_arm
 completer.ignore('gbt_arm')
@@ -220,6 +220,8 @@ get = handle_soap_fault(get)
 set = handle_soap_fault(set)
 load = handle_soap_fault(load)
 unload = handle_soap_fault(unload)
+
+# send = handle_soap_fault(send)
 
 arm = handle_soap_fault(arm)
 update_with_gbtstatus = handle_soap_fault(update_with_gbtstatus)

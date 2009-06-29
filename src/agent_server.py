@@ -63,6 +63,10 @@ class AgentServer(SimpleWSGISoapApp):
     def parameters(self, keys):
         return self.agent.parameters(keys)
 
+    @soapmethod(Array(String), Array(String), _returns=Array(String))
+    def send(self, components, payloads):
+        return self.agent.send(components, payloads)
+
     # To do: clean out non-pure methods, inherit in ControllerServer subclass?
     @soapmethod(_returns=Array(String))
     def arm(self):

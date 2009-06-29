@@ -82,4 +82,26 @@ class DaqAgent(Agent):
         self._close()
         return result
 
+    def _send(self, component, payload):
+        # component is ignored for now
+        try:
+            fifo = open('/tmp/guppi_daq_control', 'w')
+            fifo.write(payload + '\n')
+            fifo.close()
+        except:
+            return failure[0]
+        else:
+            return success[0]
+
+    def send(self, components, payloads):
+        results = []
+        for i in range(len(components)):
+            component = components[i]
+            payload = payloads[i]
+            if component == 'server':
+                results.append(self._send(component, payload))
+            else:
+                results.append('Error')
+        return results
+
 AgentClass = DaqAgent

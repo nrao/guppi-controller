@@ -119,4 +119,16 @@ class Client(Agent):
             return self._client.unload(keys)[0]
         return self._client.unload(keys)
 
+    def send(self, components, payloads):
+        if isinstance(components, str):
+            components = [components]
+            if isinstance(payloads, str):
+                payloads = [payloads]
+            if len(payloads) > 1 and len(components) == 1:
+                components = components * len(payloads)
+            return self._client.send(components, payloads)[0]
+        if len(payloads) > 1 and len(components) == 1:
+            components = components * len(payloads)
+        return self._client.send(components, payloads)
+
 AgentClient = Client

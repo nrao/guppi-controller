@@ -331,6 +331,17 @@ class Demux(Agent):
             result.append(client_values[key].pop(0))
         return result
 
+    def send(self, components, payloads):
+        results = []
+        for i in range(len(components)):
+            component = components[i]
+            payload = payloads[i]
+            if component == 'DAQ/server':
+                results += self.clients['DAQ'].send(['server'], [payload])
+            else:
+                results += ['Error']
+        return results
+
     def profiles(self, keys = index):
         """Provide information on profiles, either given or found.
         

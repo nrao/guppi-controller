@@ -34,6 +34,7 @@ class Controller(Agent):
         self.unload = self.boards.unload
         self.profiles = self.boards.profiles
         self.parameters = self.boards.parameters
+        self.send = self.boards.send
 
     def arm(self):
         set_result = self.set(['BEE2/FPGA2/GUPPi_PIPES_ARM'], ['1'])
