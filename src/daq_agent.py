@@ -85,7 +85,8 @@ class DaqAgent(Agent):
     def _send(self, component, payload):
         # component is ignored for now
         try:
-            fifo = open('/tmp/guppi_daq_control', 'w')
+            fifo = open('/tmp/guppi_daq_control', 'a+', 0)
+            fifo.flush()
             fifo.write(payload + '\n')
             fifo.close()
         except:
