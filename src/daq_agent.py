@@ -103,6 +103,10 @@ class DaqAgent(Agent):
                   'quit': 'exiting',
                   }
 
+        # If we want to send False on multiple stops or multiple starts:
+        # if states[payload.lower()] == self.get(['DAQSTATE'])[0].lower():
+        #     return failure[0]
+
         try:
             fifo_path = '/tmp/guppi_daq_control'
             try:
