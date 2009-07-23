@@ -18,6 +18,9 @@ __license__ = "GPL"
 
 from agent import Agent, index, success, failure
 from guppi_daq.guppi_utils import guppi_status
+from time import sleep
+import datetime
+import os
 
 class DaqAgent(Agent):
     status = None
@@ -82,17 +85,42 @@ class DaqAgent(Agent):
         self._close()
         return result
 
+    def check_pulse(self, limit=5):
+        pulse = self.get(['DAQPULSE'])[0]
+        pulse_format = '%a %b %d %H:%M:%S %Y'
+        delta = datetime.timedelta(0, limit)
+        pulse_datetime = datetime.datetime.strptime(pulse, pulse_format)
+        return datetime.datetime.now() - pulse_datetime < delta
+
     def _send(self, component, payload):
         # component is ignored for now
+        if not self.check_pulse():
+            return failure[0]
+
+        # expected states
+        states = {'start': 'running',
+                  'stop': 'stopped',
+                  'quit': 'exiting',
+                  }
+
         try:
-            fifo = open('/tmp/guppi_daq_control', 'a+', 0)
+            fifo_path = '/tmp/guppi_daq_control'
+            try:
+                os.stat(fifo_path)
+            except OSError:
+                return failure[0]
+            fifo = open(fifo_path, 'w+', 0)
             fifo.flush()
             fifo.write(payload + '\n')
             fifo.close()
         except:
             return failure[0]
         else:
-            return success[0]
+            for delay in (0.001, 1, 5,):
+                sleep(delay)
+                if states[payload.lower()] == self.get(['DAQSTATE'])[0].lower():
+                    return success[0]
+            return failure[0]
 
     def send(self, components, payloads):
         results = []
@@ -106,3 +134,6 @@ class DaqAgent(Agent):
         return results
 
 AgentClass = DaqAgent
+
+if __name__ == '__main__':
+    daq = DaqAgent()
