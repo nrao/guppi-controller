@@ -132,8 +132,11 @@ class Bee2Agent(Agent):
         """
         result = []
         if keys != index:
-            result += [bof for bof in self.__utils.listAllBofs()
-                       if bof[:-2] in keys]
+            for bof in self.__utils.listAllBofs():
+                if bof[:-2] in keys:
+                    result.append(bof)
+                else:
+                    result.append('Error')
         else:
             result += self.__utils.listAllBofs()
         return result
