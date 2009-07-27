@@ -131,7 +131,7 @@ class Bee2Agent(Agent):
         keys -- sequence of names of profiles for info (default index)
         """
         result = []
-        profs = __utils.listAllBofs()
+        profs = self.__utils.listAllBofs()
         if keys != index:
             bofs = [bof[:-2] for bof in profs]
             for key in keys:
