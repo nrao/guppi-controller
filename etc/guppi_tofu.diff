@@ -1,6 +1,6 @@
 === modified file 'src/demux.py'
---- src/demux.py	2009-03-19 17:16:36 +0000
-+++ src/demux.py	2009-04-21 14:01:30 +0000
+--- src/demux.py	2009-06-29 18:38:06 +0000
++++ src/demux.py	2009-07-30 16:01:47 +0000
 @@ -48,8 +48,8 @@
          self.clients = {'BEE2': AgentClient(Bee2Agent, host = 'bee2',
                                              port = 8915)
@@ -50,7 +50,7 @@
 +        # synth_keys = [key.replace('SYNTH/', '') for key in client_keys['SYNTH']]
 +        # synth_values = self.clients['SYNTH'].get(synth_keys)
          none_keys = client_keys['']
-         none_values = ['KeyError' for i in range(len(none_keys))]
+         none_values = ['Error' for i in range(len(none_keys))]
  
          # build result
          client_values = {'BEE2': bee2_values,
@@ -62,4 +62,17 @@
                           '': none_values}
  
          result = []
+
+=== modified file 'src/interpreter.py'
+--- src/interpreter.py	2009-06-29 18:38:06 +0000
++++ src/interpreter.py	2009-07-30 16:08:59 +0000
+@@ -148,7 +148,7 @@
+ completer.accept(locals())
+ 
+ # Print welcome message(s).
+-set_prompt('guppi')
++set_prompt('wuppi')
+ print 'Welcome to the NRAO GUPPI interpreter and command prompt.'
+ print
+ try:
 
