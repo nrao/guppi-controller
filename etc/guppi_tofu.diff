@@ -1,6 +1,89 @@
+=== modified file 'etc/guppi_tofu.diff'
+--- etc/guppi_tofu.diff	2009-07-30 20:12:37 +0000
++++ etc/guppi_tofu.diff	2009-08-06 18:37:14 +0000
+@@ -1,78 +0,0 @@
+-=== modified file 'src/demux.py'
+---- src/demux.py	2009-06-29 18:38:06 +0000
+-+++ src/demux.py	2009-07-30 16:01:47 +0000
+-@@ -48,8 +48,8 @@
+-         self.clients = {'BEE2': AgentClient(Bee2Agent, host = 'bee2',
+-                                             port = 8915)
+-                         , 'DAQ': DaqAgent()
+--                        , 'POWER': PowerstripAgent()
+--                        , 'SYNTH': SynthAgent()
+-+                        # , 'POWER': PowerstripAgent()
+-+                        # , 'SYNTH': SynthAgent()
+-                         }
+- 
+-     def get(self, keys = index):
+-@@ -63,17 +63,17 @@
+-         """
+-         if keys == index:
+-             return ['BEE2/' + key for key in self.clients['BEE2'].get(index)] +\
+--                   ['DAQ/' + key for key in self.clients['DAQ'].get(index)] +\
+--                   ['POWER/' + key for key in self.clients['POWER'].get(index)] +\
+--                   ['SYNTH/' + key for key in self.clients['SYNTH'].get(index)]
+-+                   ['DAQ/' + key for key in self.clients['DAQ'].get(index)] # +\
+-+                   # ['POWER/' + key for key in self.clients['POWER'].get(index)] +\
+-+                   # ['SYNTH/' + key for key in self.clients['SYNTH'].get(index)]
+-         elif keys == bee2_index:
+-             return ['BEE2/' + key for key in self.clients['BEE2'].get(index)]
+-         elif keys == daq_index:
+-             return ['DAQ/' + key for key in self.clients['DAQ'].get(index)]
+--        elif keys == power_index:
+--            return ['POWER/' + key for key in self.clients['POWER'].get(index)]
+--        elif keys == synth_index:
+--            return ['SYNTH/' + key for key in self.clients['SYNTH'].get(index)]
+-+        # elif keys == power_index:
+-+        #     return ['POWER/' + key for key in self.clients['POWER'].get(index)]
+-+        # elif keys == synth_index:
+-+        #     return ['SYNTH/' + key for key in self.clients['SYNTH'].get(index)]
+- 
+-         # HACK:
+-         # try out combining BEE2 and DAQ calls
+-@@ -108,18 +108,18 @@
+-         bee2_values = self.clients['BEE2'].get(bee2_keys)
+-         daq_keys = [key.replace('DAQ/', '') for key in client_keys['DAQ']]
+-         daq_values = self.clients['DAQ'].get(daq_keys)
+--        power_keys = [key.replace('POWER/', '') for key in client_keys['POWER']]
+--        power_values = self.clients['POWER'].get(power_keys)
+--        synth_keys = [key.replace('SYNTH/', '') for key in client_keys['SYNTH']]
+--        synth_values = self.clients['SYNTH'].get(synth_keys)
+-+        # power_keys = [key.replace('POWER/', '') for key in client_keys['POWER']]
+-+        # power_values = self.clients['POWER'].get(power_keys)
+-+        # synth_keys = [key.replace('SYNTH/', '') for key in client_keys['SYNTH']]
+-+        # synth_values = self.clients['SYNTH'].get(synth_keys)
+-         none_keys = client_keys['']
+-         none_values = ['Error' for i in range(len(none_keys))]
+- 
+-         # build result
+-         client_values = {'BEE2': bee2_values,
+-                          'DAQ': daq_values,
+--                         'POWER': power_values,
+--                         'SYNTH': synth_values,
+-+                         # 'POWER': power_values,
+-+                         # 'SYNTH': synth_values,
+-                          '': none_values}
+- 
+-         result = []
+-
+-=== modified file 'src/interpreter.py'
+---- src/interpreter.py	2009-06-29 18:38:06 +0000
+-+++ src/interpreter.py	2009-07-30 16:08:59 +0000
+-@@ -148,7 +148,7 @@
+- completer.accept(locals())
+- 
+- # Print welcome message(s).
+--set_prompt('guppi')
+-+set_prompt('wuppi')
+- print 'Welcome to the NRAO GUPPI interpreter and command prompt.'
+- print
+- try:
+-
+
 === modified file 'src/demux.py'
 --- src/demux.py	2009-06-29 18:38:06 +0000
-+++ src/demux.py	2009-07-30 16:01:47 +0000
++++ src/demux.py	2009-08-06 17:46:54 +0000
 @@ -48,8 +48,8 @@
          self.clients = {'BEE2': AgentClient(Bee2Agent, host = 'bee2',
                                              port = 8915)
@@ -65,7 +148,7 @@
 
 === modified file 'src/interpreter.py'
 --- src/interpreter.py	2009-06-29 18:38:06 +0000
-+++ src/interpreter.py	2009-07-30 16:08:59 +0000
++++ src/interpreter.py	2009-08-06 17:46:54 +0000
 @@ -148,7 +148,7 @@
  completer.accept(locals())
  
@@ -75,4 +158,17 @@
  print 'Welcome to the NRAO GUPPI interpreter and command prompt.'
  print
  try:
+
+=== modified file 'src/scripts/utils.py'
+--- src/scripts/utils.py	2009-06-18 00:21:19 +0000
++++ src/scripts/utils.py	2009-08-06 18:07:03 +0000
+@@ -35,7 +35,7 @@
+     verbose_set('BEE2/FPGA2/SCALE_U', '01000000')
+     verbose_set('BEE2/FPGA2/SCALE_V', '01000000')
+     verbose_set('BEE2/FPGA2/ACC_LENGTH', '0000000f')
+-    verbose_set('BEE2/FPGA2/DEST_IP', 'c0a80307')
++    verbose_set('BEE2/FPGA2/DEST_IP', 'c0a8030a')
+     verbose_set('BEE2/FPGA2/DEST_PORT', '0000c350')
+     verbose_set('BEE2/FPGA2/DC_BINS_EN', '00000001')
+     if mode == "1sfa":
 
