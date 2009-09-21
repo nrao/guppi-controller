@@ -204,12 +204,12 @@ else:
             diff3 = -1.0 * diff3
         else:
             verb3 = 'Add'
-        print 'FPGA1 (CM5): Mean=%.3f RMS=%.3f Min=%d Max=%d' % s1
-        print '       %s %.1f dB attenuation (for target RMS %.1f)' \
-                % (verb1, diff1, target_rms)
-        print 'FPGA3 (CM1): Mean=%.3f RMS=%.3f Min=%d Max=%d' % s3
+        print 'CM4 (FPGA3): Mean=%.3f RMS=%.3f Min=%d Max=%d' % s3
         print '       %s %.1f dB attenuation (for target RMS %.1f)' \
                 % (verb3, diff3, target_rms)
+        print 'CM8 (FPGA1): Mean=%.3f RMS=%.3f Min=%d Max=%d' % s1
+        print '       %s %.1f dB attenuation (for target RMS %.1f)' \
+                % (verb1, diff1, target_rms)
         pylab.plot(x[1:]-0.5, h1, label='FPGA1')
         pylab.plot(x[1:]-0.5, h3, label='FPGA3')
         pylab.legend()
