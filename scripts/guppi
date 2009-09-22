@@ -5,9 +5,9 @@ cat - << HERE
 
   WARNING:  The 'guppi' interpreter should not be used anymore for
   standard GBT observing.  ADC histograms can be viewed by running
-  'plot_adc_hist' from the beef command line (see
+  'guppi_adc_hist' from the beef command line (see
   https://safe.nrao.edu/wiki/bin/view/CICADA/GUPPIAstridGuide for more
-  info).  Doing anything at the guppi> prompt can potentially screw up
+  info).  Doing anything at the guppi> prompt can potentially harm
   current and future GUPPI observations.  If you know what you are doing
   and would like to continue, type yes at the following prompt:
 
