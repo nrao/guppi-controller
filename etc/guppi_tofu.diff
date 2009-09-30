@@ -172,3 +172,14 @@
      verbose_set('BEE2/FPGA2/DC_BINS_EN', '00000001')
      if mode == "1sfa":
 
+=== modified file 'src/scripts/exec.py'
+--- src/scripts/exec.py 2009-05-04 17:50:17 +0000
++++ src/scripts/exec.py 2009-09-30 15:42:32 +0000
+@@ -5,6 +5,7 @@
+ 
+ lineup = ('utils.py',
+           'modes.py',
++          'wuppi.py',
+           )
+ 
+ for script in lineup:
