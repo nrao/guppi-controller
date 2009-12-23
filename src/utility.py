@@ -20,7 +20,7 @@ def generate_mask(n):
     """Generates a bitmask of all 1s of the specified length."""
     return (1 << n) - 1
 
-def xstr2float(xstr, frac_bits=0, sign_bit=32, radix=16):
+def xstr2float(xstr, frac_bits=0, sign_bit=None, radix=16):
     """Converts a numeric string from xilinx fixed point to floating point.
 
     'xstr' is expected to be a hex string, but can be any base as long
@@ -32,7 +32,7 @@ def xstr2float(xstr, frac_bits=0, sign_bit=32, radix=16):
         n -= (1 << sign_bit)
     return float(n) / float(1 << frac_bits)
 
-def float2xstr(num, frac_bits=0, sign_bit=32):
+def float2xstr(num, frac_bits=0, sign_bit=None):
     """Converts a floating point number to a xilinx fixed point hex string.
 
     'num' can be an integer or floating point, positive or negative.
