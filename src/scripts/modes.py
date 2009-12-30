@@ -9,9 +9,10 @@ guppi_modelist = {
             'BEE2/b2_GDSP_U3_4K_800_A_XA_fpga3_2008_Jul_30_1414.bof'
             ],
         '128': [
-            'BEE2/bGOUT_U2_256_1SFA_D26_fpga2_2009_Apr_21_1155.bof',
-            'BEE2/bGDSP_U1_256_1248_D20_fpga1_2009_Apr_14_2030.bof',
-            'BEE2/bGDSP_U3_256_1248_D20_fpga3_2009_Apr_14_2111.bof'
+            'BEE2/bGOUT_U2_0128_1SFA_P00_fpga2_2009_May_14_1515.bof',
+            'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_15_1455.bof',
+            'BEE2/bGDSP_U1_0128_1248_P00_fpga1_2009_Dec_17_1302.bof',
+            'BEE2/bGDSP_U3_0128_1248_P00_fpga3_2009_Dec_17_1303.bof'
             ],
         '256': [
             'BEE2/bGOUT_U2_0256_1SFA_P00_fpga2_2009_Jul_07_0843.bof',
