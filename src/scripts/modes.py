@@ -103,8 +103,9 @@ guppi_modelist = {
 def mode(modename="none"):
     """Load a GUPPI hardware mode (set of bof files) from a predefined list."""
 
-    # If no arg was given, print list of choices
+    # If no arg was given, print list of choices, and currently loaded
     if modename == "none":
+        print "Current mode: ", get_mode()
         print "Valid modes: ", guppi_modelist.keys()
         return 
 
@@ -128,4 +129,28 @@ def mode(modename="none"):
     print "Loading '%s' mode: " % modename, 
     sys.stdout.flush()
     print load(guppi_modelist[modename])
+
+def get_mode():
+    """Tries to determine what GUPPI HW mode (bof set) is currently loaded."""
+
+    # Read currently loaded bofs
+    bofs = unload()
+
+    # Special return codes
+    mode_none = 'None'
+    mode_unk = 'Unknown'
+
+    # If nothing is loaded..
+    if len(bofs)==0: return mode_none
+
+    # All current modes have 4 bofs
+    if len(bofs)!=4: return mode_unk
+
+    # Match set with modelist
+    for modename in guppi_modelist.keys():
+        if sorted(bofs) == sorted(guppi_modelist[modename]):
+            return modename
+
+    # Nothing matched, return unknown
+    return mode_unk
 
