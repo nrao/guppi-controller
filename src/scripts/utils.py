@@ -1,5 +1,5 @@
 from binascii import hexlify
-import numpy
+import math, numpy
 from time import sleep
 
 try:
@@ -13,6 +13,9 @@ def verbose_set(key, value):
     
 def init(mode="1sfa"):
     """Initializes registers to their default values."""
+
+    # If we're in coherent mode, run init2() instead
+    if get_coherent(): return init2()
 
     # FPGAs 1 and 3 always have the same settings
     for fpga in ["FPGA1", "FPGA3"]:
@@ -53,6 +56,66 @@ def init(mode="1sfa"):
            'gateway = 192.168.3.8\nport = 50000\nend\n'
     verbose_set('BEE2/FPGA2/ten_GbE', hexlify(text))
     print 'encoded from:\n%s' % text
+
+def get_nchan():
+    """Determine number of channels from FPGA1/3 bof names."""
+    # Note this assumes bof names have structure like:
+    #   BEE2/bGDSP_U1_2048_1248_P00_fpga1_2009_Jun_03_1645.bof
+    nchan1 = ''
+    nchan3 = ''
+    for bof in unload():
+        (fpga, nchan) = bof.split('_')[1:3]
+        if fpga=='U1': nchan1=nchan
+        if fpga=='U3': nchan3=nchan
+    if nchan1==nchan3: return int(nchan1)
+    else: return 0
+
+def get_coherent():
+    """Determine if coherent dedispersion mode is loaded."""
+    # Looks for the string 'CoDD' to be present somewhere.
+    for bof in unload():
+        if bof.find('CoDD') > 0: return True
+    return False
+
+def init2():
+    """Initializes FPGA registers for coherent (guppi2) modes"""
+
+    for fpga in ["FPGA1", "FPGA3"]:
+        verbose_set('BEE2/%s/FFT_SHIFT' % fpga, 'aaaaaaaa')
+        verbose_set('BEE2/%s/FFT_SHIFT' % fpga, '00000001')
+
+    # NOTE: bw_sel=2 only applies for 100, 200 and 800 MHz
+    verbose_set('BEE2/FPGA2/GUPPi_PIPES_ARM',    '00000000')
+    verbose_set('BEE2/FPGA2/GUPPi_PIPES_BW_SEL', '00000002')
+
+    verbose_set('BEE2/FPGA2/SCALE_P0', '00200000')
+    verbose_set('BEE2/FPGA2/SCALE_P1', '00200000')
+
+    # Figure out nchan from bof names
+    nchan = get_nchan()
+    if nchan>0:
+        log2nchan = int(math.log(float(nchan))/math.log(2))
+        verbose_set('BEE2/FPGA2/N_CHAN', '%x' % log2nchan)
+    else:
+        # don't know nchan, set it to 7 (128 chans)
+        print "Warning: N_CHAN could not be determined! Assuming 128 channels."
+        verbose_set('BEE2/FPGA2/N_CHAN', '00000007')
+
+    # Set BEE2's 10gig IP addresses
+    for ip in range(4):
+        text = 'begin\nmac = 10:10:10:10:10:%02x\nip = 192.168.3.%d\n' + \
+               'gateway = 192.168.3.%d\nport = 50000\nend\n' % \
+               (16+ip, 20+ip, 20+ip)
+        reg = 'BEE2/FPGA2/4_X_10Ge_10Ge_%d_ten_GbE' % ip
+        print "Setting %s to:" % reg
+        print text
+        print "  ...",  set(reg, hexlify(text))
+
+    # Set destination IPs/ports, currently gpu1-8
+    for ip in range(8):
+        verbose_set('BEE2/FPGA2/IP_%d' % ip, 
+                '%02x%02x%02x%02x' % (192,168,3,101+ip))
+        verbose_set('BEE2/FPGA2/PT_%d' % ip, '%08x' % 50000)
 
 def reset(synth_freq=None, wait=3):
     """Reset guppi's synthesizer to the frequency given in MHz."""
