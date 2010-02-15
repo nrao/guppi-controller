@@ -111,7 +111,8 @@ class Bee2Utils:
             args = procname.split()
             if not args[0].startswith('/'):
                 args[0] = './' + args[0]
-            bofp = Popen(args, stdout=PIPE, close_fds=True,
+            ff = open("/srv/cicada/log/%s.log" % args[0], "w")
+            bofp = Popen(args, stdout=ff, close_fds=True,
                          shell=False, cwd=procdir, bufsize=16)
             result = 'True'
         except (OSError, RuntimeError):
