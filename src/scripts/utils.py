@@ -104,8 +104,8 @@ def init2():
     # Set BEE2's 10gig IP addresses
     for ip in range(4):
         text = ('begin\nmac = 10:10:10:10:10:%02x\nip = 192.168.3.%d\n' + \
-               'gateway = 192.168.3.%d\nport = 50000\nend\n') % \
-               (16+ip, 20+ip, 20+ip)
+               'gateway = 192.168.3.7\nport = 50000\nend\n') % \
+               (16+ip, 20+ip)
         reg = 'BEE2/FPGA2/4_X_10Ge_10Ge_%d_ten_GbE' % ip
         print "Setting %s to:" % reg
         print text
