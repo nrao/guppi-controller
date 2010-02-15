@@ -28,6 +28,10 @@ guppi_dsp_bofs = {
             'BEE2/bGDSP_U1_0512_1248_P01_fpga1_2009_Dec_31_1616.bof',
             'BEE2/bGDSP_U3_0512_1248_P01_fpga3_2009_Dec_31_1616.bof'
             ],
+        '512_12T': [
+            'BEE2/bGDSP_U1_0512_T012_P01_fpga1_2010_Feb_02_1048.bof',
+            'BEE2/bGDSP_U3_0512_T012_P01_fpga3_2010_Feb_02_0857.bof'
+            ],
         '1024': [
             'BEE2/bGDSP_U1_1024_1248_P00_fpga1_2009_Jul_06_1330.bof',
             'BEE2/bGDSP_U3_1024_1248_P00_fpga3_2009_Jul_06_1408.bof'
@@ -95,7 +99,7 @@ guppi_modelist = {
         'c64':   guppi2_common_bofs + guppi_dsp_bofs['64'],
         'c128':  guppi2_common_bofs + guppi_dsp_bofs['128'],
         'c256':  guppi2_common_bofs + guppi_dsp_bofs['256'],
-        'c512':  guppi2_common_bofs + guppi_dsp_bofs['512'],
+        'c512':  guppi2_common_bofs + guppi_dsp_bofs['512_12T'],
         'c1024': guppi2_common_bofs + guppi_dsp_bofs['1024'],
         'c2048': guppi2_common_bofs + guppi_dsp_bofs['2048']
         }
