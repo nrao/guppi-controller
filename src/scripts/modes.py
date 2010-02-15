@@ -6,7 +6,7 @@ guppi_xal_bof = 'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_15_1455.bof'
 
 # These bofs are common to all coherent modes
 guppi2_common_bofs = [
-        'BEE2/bGOUT_U2_1SFA_CoDD_P01_fpga2_2010_Jan_22_1617.bof',
+        'BEE2/bGOUT_U2_1SFA_CoDD_P05_fpga2_2010_Feb_11_1123.bof',
         guppi_xal_bof
         ]
 
