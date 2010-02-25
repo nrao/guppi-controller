@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export PATH=/home/pulsar64/bin:/opt/gpu/bin:$PATH
+export PYTHONPATH=/opt/gpu/lib/python/site-packages:/opt/gpu/guppi/lib/python/site-packages:$PYTHONPATH
+
+echo -n "running guppi server (gpu), "
+date
+exec guppi_server daq_agent $@
