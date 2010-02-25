@@ -1,0 +1,53 @@
+#! /bin/bash
+#
+# supervisord     Start/Stop the supervisord process manager daemon.
+#
+# chkconfig: - 85 15
+# description: monitors and controls processes.
+#
+# config: /etc/supervisord.conf
+# pidfile: /var/run/supervisor.pid
+
+# Source function library.
+. /etc/init.d/functions
+
+export PATH=/home/pulsar64/bin:/opt/gpu/bin:$PATH
+source /opt/64bit/guppi/guppi.bash >/dev/null 2>&1
+
+prog="supervisord"
+
+start() {
+        echo -n $"Starting $prog: "     
+        daemon supervisord
+        RETVAL=$?
+        echo
+        return $RETVAL
+}
+
+stop() {
+        echo -n $"Stopping $prog: "
+        killproc supervisord
+        RETVAL=$?
+        echo
+        return $RETVAL
+}       
+
+restart() {
+        stop
+        start
+}       
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart)
+        restart
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart}"
+        exit 1
+esac
