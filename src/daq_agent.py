@@ -86,6 +86,10 @@ class DaqAgent(Agent):
         return result
 
     def check_pulse(self, limit=5):
+        try:
+            self.get(['DAQPULSE'])[0]
+        except:
+            return False
         pulse = self.get(['DAQPULSE'])[0]
         pulse_format = '%a %b %d %H:%M:%S %Y'
         delta = datetime.timedelta(0, limit)

@@ -26,31 +26,26 @@ from daq_agent import DaqAgent
 from powerstrip_agent import PowerstripAgent
 from synth_agent import SynthAgent
 
-# Hard-code a single BEE2 client for now...
-# ... and hard-code client calls
-
-# ... and create client index parameters:
-# (These are used in get(...) below.)
-bee2_index = deepcopy(index)
-bee2_index[0] = 'BEE2/' + bee2_index[0]
-
-daq_index = deepcopy(index)
-daq_index[0] = 'DAQ/' + daq_index[0]
-
-power_index = deepcopy(index)
-power_index[0] = 'POWER/' + power_index[0]
-
-synth_index = deepcopy(index)
-synth_index[0] = 'SYNTH/' + synth_index[0]
-
 class Demux(Agent):
     def __init__(self):
-        self.clients = {'BEE2': AgentClient(Bee2Agent, host = 'bee2',
-                                            port = 8915)
-                        , 'DAQ': DaqAgent()
+        self.clients = {'BEE2': AgentClient(Bee2Agent, host='bee2', port=8915)
                         , 'POWER': PowerstripAgent()
                         , 'SYNTH': SynthAgent()
+                        , 'DAQ': DaqAgent()
+                        , 'GPU1/DAQ': AgentClient(DaqAgent, host='gpu1', port=8915)
+                        , 'GPU2/DAQ': AgentClient(DaqAgent, host='gpu2', port=8915)
+                        , 'GPU3/DAQ': AgentClient(DaqAgent, host='gpu3', port=8915)
+                        , 'GPU4/DAQ': AgentClient(DaqAgent, host='gpu4', port=8915)
+                        , 'GPU5/DAQ': AgentClient(DaqAgent, host='gpu5', port=8915)
+                        , 'GPU6/DAQ': AgentClient(DaqAgent, host='gpu6', port=8915)
+                        , 'GPU7/DAQ': AgentClient(DaqAgent, host='gpu7', port=8915)
+                        , 'GPU8/DAQ': AgentClient(DaqAgent, host='gpu8', port=8915)
+                        , 'GPU9/DAQ': AgentClient(DaqAgent, host='gpu9', port=8915)
                         }
+        self.order = sorted(self.clients.keys())
+        self.index = {}
+        for key in self.order:
+            self.index[key + '/' + index[0]] = key
 
     def get(self, keys = index):
         """Get all values of parameters matching keys in keys list.
@@ -62,69 +57,45 @@ class Demux(Agent):
         keys -- names of parameters to get (default index)
         """
         if keys == index:
-            return ['BEE2/' + key for key in self.clients['BEE2'].get(index)] +\
-                   ['DAQ/' + key for key in self.clients['DAQ'].get(index)] +\
-                   ['POWER/' + key for key in self.clients['POWER'].get(index)] +\
-                   ['SYNTH/' + key for key in self.clients['SYNTH'].get(index)]
-        elif keys == bee2_index:
-            return ['BEE2/' + key for key in self.clients['BEE2'].get(index)]
-        elif keys == daq_index:
-            return ['DAQ/' + key for key in self.clients['DAQ'].get(index)]
-        elif keys == power_index:
-            return ['POWER/' + key for key in self.clients['POWER'].get(index)]
-        elif keys == synth_index:
-            return ['SYNTH/' + key for key in self.clients['SYNTH'].get(index)]
-
-        # HACK:
-        # try out combining BEE2 and DAQ calls
-        # keep subsequent get calls to 1 call to BEE2 and 1 to DAQ
-        # Wow, this BADLY needs refactoring... just need to find the time.
+            indices = []
+            for name in self.order:
+                client = self.clients[name]
+                # Returning a get() index should fail silently.
+                try:
+                    indices += [name + '/' + key for key in client.get(index)]
+                except:
+                    pass
+            return indices
+        elif self.index.has_key(keys[0]):
+            name = self.index[keys[0]]
+            client = self.clients[name]
+            return [name + '/' + key for key in client.get(index)]
 
         # build key order
-        client_keys = {'BEE2': [],
-                       'DAQ': [],
-                       'POWER': [],
-                       'SYNTH': [],
-                       '': []}
+        client_keys = {'': []}
+        for name in self.order:
+            client_keys[name] = []
         key_order = []
         for key in keys:
-            if re.match('^BEE2\/', key):
-                key_order.append('BEE2')
-                client_keys['BEE2'].append(key)
-            elif re.match('^DAQ\/', key):
-                key_order.append('DAQ')
-                client_keys['DAQ'].append(key)
-            elif re.match('^POWER\/', key):
-                key_order.append('POWER')
-                client_keys['POWER'].append(key)
-            elif re.match('^SYNTH\/', key):
-                key_order.append('SYNTH')
-                client_keys['SYNTH'].append(key)
+            for name in self.order:
+                if re.match('^' + name + '\/', key):
+                    key_order.append(name)
+                    client_keys[name].append(key)
+                    break
             else:
                 key_order.append('')
                 client_keys[''].append(key)
 
-        bee2_keys = [key.replace('BEE2/', '') for key in client_keys['BEE2']]
-        bee2_values = self.clients['BEE2'].get(bee2_keys)
-        daq_keys = [key.replace('DAQ/', '') for key in client_keys['DAQ']]
-        daq_values = self.clients['DAQ'].get(daq_keys)
-        power_keys = [key.replace('POWER/', '') for key in client_keys['POWER']]
-        power_values = self.clients['POWER'].get(power_keys)
-        synth_keys = [key.replace('SYNTH/', '') for key in client_keys['SYNTH']]
-        synth_values = self.clients['SYNTH'].get(synth_keys)
-        none_keys = client_keys['']
-        none_values = ['Error' for i in range(len(none_keys))]
-
-        # build result
-        client_values = {'BEE2': bee2_values,
-                         'DAQ': daq_values,
-                         'POWER': power_values,
-                         'SYNTH': synth_values,
-                         '': none_values}
+        client_values = {}
+        for name in self.order:
+            getmes = [key.replace(name + '/', '') for key in client_keys[name]]
+            if getmes:
+                client_values[name] = self.clients[name].get(getmes)
+        client_values[''] = ['Error' for i in range(len(client_keys['']))]
 
         result = []
-        for key in key_order:
-            result.append(client_values[key].pop(0))
+        for name in key_order:
+            result.append(client_values[name].pop(0))
         return result
 
     def set(self, keys, values):
@@ -140,81 +111,35 @@ class Demux(Agent):
                          , index[0] : ''}
         values = [value_convert.get(value, value) for value in values]
 
-        # HACK:
-        # try out combining BEE2 and DAQ calls
-        # keep subsequent get calls to 1 call to BEE2 and 1 to DAQ
-        # Wow, this BADLY needs refactoring... just need to find the time.
-
         # build key order
-        client_keys = {'BEE2': [],
-                       'DAQ': [],
-                       'POWER': [],
-                       'SYNTH': [],
-                       '': []}
-        client_values = {'BEE2': [],
-                         'DAQ': [],
-                         'POWER': [],
-                         'SYNTH': [],
-                         '': []}
+        client_keys = {'': []}
+        client_values = {'': []}
+        client_results = {'': []}
+        for name in self.order:
+            client_keys[name] = []
+            client_values[name] = []
+            client_results[name] = []
         key_order = []
         for i in range(len(keys)):
             key = keys[i]
             value = values[i]
-            if re.match('^BEE2\/', key):
-                key_order.append('BEE2')
-                client_keys['BEE2'].append(key)
-                client_values['BEE2'].append(value)
-            elif re.match('^DAQ\/', key):
-                key_order.append('DAQ')
-                client_keys['DAQ'].append(key)
-                client_values['DAQ'].append(value)
-            elif re.match('^POWER\/', key):
-                key_order.append('POWER')
-                client_keys['POWER'].append(key)
-                client_values['POWER'].append(value)
-            elif re.match('^SYNTH\/', key):
-                key_order.append('SYNTH')
-                client_keys['SYNTH'].append(key)
-                client_values['SYNTH'].append(value)
+            for name in self.order:
+                if re.match('^' + name + '\/', key):
+                    key_order.append(name)
+                    client_keys[name].append(key)
+                    client_values[name].append(value)
+                    break
             else:
                 key_order.append('')
                 client_keys[''].append(key)
                 client_values[''].append(value)
 
-        bee2_keys = [key.replace('BEE2/', '') for key in client_keys['BEE2']]
-        bee2_values = client_values['BEE2']
-        daq_keys = [key.replace('DAQ/', '') for key in client_keys['DAQ']]
-        daq_values = client_values['DAQ']
-        power_keys = [key.replace('POWER/', '') for key in client_keys['POWER']]
-        power_values = client_values['POWER']
-        synth_keys = [key.replace('SYNTH/', '') for key in client_keys['SYNTH']]
-        synth_values = client_values['SYNTH']
-        none_keys = client_keys['']
-        none_values = client_values['']
-
-        # build result
-        bee2_results = []
-        daq_results = []
-        power_results = []
-        synth_results = []
-        none_results = []
-
-        if 'BEE2' in key_order:
-            bee2_results = self.clients['BEE2'].set(bee2_keys, bee2_values)
-        if 'DAQ' in key_order:
-            daq_results = self.clients['DAQ'].set(daq_keys, daq_values)
-        if 'POWER' in key_order:
-            power_results = self.clients['POWER'].set(power_keys, power_values)
-        if 'SYNTH' in key_order:
-            synth_results = self.clients['SYNTH'].set(synth_keys, synth_values)
-
-        for key in none_keys:
-            none_results += failure
-        client_results = {'BEE2': bee2_results,
-                          'DAQ': daq_results,
-                          'POWER': power_results,
-                          'SYNTH': synth_results,
-                          '': none_results}
+        for name in self.order:
+            setmes = [key.replace(name + '/', '') for key in client_keys[name]]
+            setwiths = client_values[name]
+            if setmes:
+                client_results[name] = self.clients[name].set(setmes, setwiths)
+        client_results[''] = ['Error' for i in range(len(client_keys['']))]
 
         result = []
         for key in key_order:
@@ -336,8 +261,11 @@ class Demux(Agent):
         for i in range(len(components)):
             component = components[i]
             payload = payloads[i]
-            if component == 'DAQ/server':
-                results += self.clients['DAQ'].send(['server'], [payload])
+            for name in self.order:
+                server_name = name + '/server'
+                if component == server_name:
+                    results += self.clients[name].send(['server'], [payload])
+                    break
             else:
                 results += ['Error']
         return results
