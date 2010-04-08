@@ -5,7 +5,7 @@ from agent import Agent
 class SynthAgent(Agent):
     def __init__(self, addr=('gpib_adapter', 1234)):
         self.__addr = addr
-        self.__keys = ['CFRQ/VALUE'] # ['CFRQ', 'RFLV', 'CFRQ/VALUE']
+        self.__keys = ['CFRQ/VALUE', 'RFLV/VALUE']
         self.__term = '\n'
 
     def _recv(self):
