@@ -258,6 +258,14 @@ class Demux(Agent):
 
     def send(self, components, payloads):
         results = []
+        # HACK:
+        # Support a special case where `send` hits all GPU nodes.
+        all_gpus = 'GPUS/DAQ/server'
+        if components == [all_gpus] or components[0] == all_gpus:
+            for payload in payloads:
+                for name in [c for c in self.order if c.startswith('GPU')]:
+                    results += self.clients[name].send(['server'], [payload])
+            return results
         for i in range(len(components)):
             component = components[i]
             payload = payloads[i]
@@ -272,7 +280,7 @@ class Demux(Agent):
 
     def profiles(self, keys = index):
         """Provide information on profiles, either given or found.
-        
+
         If keys is ['index'], return a list of info on all found profiles,
         formatted ['profile_name,s', ...] where s is state of profile.
 
@@ -289,7 +297,7 @@ class Demux(Agent):
 
     def parameters(self, keys = index):
         """Provide information on parameters, either given or found.
-        
+
         If keys is ['index'], return a list of info on all found
         parameters, formatted ['parameter_name,s', ...] where s is state of
         parameter.
