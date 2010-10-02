@@ -1,3 +1,9 @@
 .hgignore
 .hg
 build
+dist
+*.egg
+*.egg-info
+*.log
+*.pyc
+*.pyo
