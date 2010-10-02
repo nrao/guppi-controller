@@ -1,0 +1,26 @@
+#/bin/bash
+# set_tengbe
+#
+# Sets the MAC address of the 10 GbE module.
+# Pass in the FPGA number for the running bof process.
+#
+# Ron DuPlain
+# 16 Apr 2008
+
+case "$1" in
+    [0-9])
+        FILEDIR=`dirname $0`
+        BOFPID=`findbof -1 $1`
+        cp -f $FILEDIR/set_tengbe.txt /proc/$BOFPID/hw/ioreg/ten_GbE
+        echo "ten_GbE data:"
+        cat /proc/$BOFPID/hw/ioreg/ten_GbE
+        ;;
+    *)
+        # Print help message.
+        echo "$0: sets the MAC address of the 10 GbE module."
+        echo "usage: $0 [<FPGA number for running bof process with ten_GbE>]"
+        echo
+
+        exit 1
+        ;;
+esac

@@ -1,0 +1,16 @@
+#/bin/bash
+# killbof
+#
+# Finds all bof processes and kills them.
+#
+# Ron DuPlain
+# 01 Jul 2008
+
+FINDBOF_OUTPUT=`findbof -1`
+if [ -z "$FINDBOF_OUTPUT" ]; then
+    echo no process killed
+    exit 1
+fi
+
+findbof -1 | xargs kill
+

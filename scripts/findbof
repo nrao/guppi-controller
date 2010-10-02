@@ -1,0 +1,82 @@
+#!/bin/bash
+# findbof
+#
+# Find all running bof processes, found in process list with ".bof" in name.
+# Optionally, specify the fpga numbers of interest as command-line arguments.
+#
+# Example Usage:
+#     bee2:~# findbof
+#     pid -> .bof profile
+#     -------------------
+#     297 -> ./bee2_guppi_dsp_User1_4k_fpga1_2008_Mar_28_2110.bof
+#     300 -> ./bee2_guppi_dsp_User3_4K_fpga3_2008_Mar_28_2113.bof
+#     303 -> ./b2GO_100_01_fpga2_2008_Apr_03_1430.bof
+#     ...
+#     bee2:~# findbof 2 3
+#     pid -> .bof profile
+#     -------------------
+#     297 -> ./bee2_guppi_dsp_User1_4k_fpga1_2008_Mar_28_2110.bof
+#     300 -> ./bee2_guppi_dsp_User3_4K_fpga3_2008_Mar_28_2113.bof
+#     303 -> ./b2GO_100_01_fpga2_2008_Apr_03_1430.bof
+#     ...
+#     303 <- fpga2
+#     300 <- fpga3
+#     bee2:~#
+#
+# FPGA profiles are expected to have format *fpgaN*.bof where N is FPGA number.
+#
+# Ron DuPlain
+# 04 Apr - 16 Apr 2008
+
+ONEPERLINE=0
+
+# Iterate through command-line, parse options and arguments.
+# While the number of command-line arguments is greater than 0 ...
+while [ $# -gt 0 ]; do
+    # Act on the currently selected command-line argument.
+    case "$1" in
+        -1)
+            # Set option: list only one PID per line
+            ONEPERLINE=1
+            ;;
+        -h|--help)
+            # Print help message.
+            echo "$0: print bof profiles and their process IDs (PIDs)"
+            echo "usage: $0 [-1] [<list of space-delimited FPGA numbers>]"
+            echo
+            echo " -1: list only one PID per line (useful for scripting)"
+            echo
+
+            exit 1
+            ;;
+        *)
+            # Collect the argument.
+            args="${args[@]} $1"
+            ;;
+    esac
+    shift
+done
+
+# Act on the parsed arguments.
+if [ "$ONEPERLINE" = "1" ]; then
+    ARGEXISTS=0
+    for i in $args; do
+        ps -A aux | awk '/.*fpga'$i'.*[\.]bof/ { print $2 }'
+        ARGEXISTS=1
+    done
+    # Print all bof PIDs if no arguments are given.
+    if [ "$ARGEXISTS" = "0" ]; then
+        ps -A aux | awk '/[\.]bof/ { print $2 }'
+    fi
+else
+    # Print all bof PIDs.
+    echo "pid -> .bof profile"
+    echo "-------------------"
+    ps -A aux | awk '/[\.]bof/ { print $2 " -> " $11 }'
+    echo ...
+
+    # Print given bof PIDs in friendly format if arguments are given.
+    for i in $args; do
+        ps -A aux | awk '/.*fpga'$i'.*[\.]bof/ { print $2 " <- fpga'$i'" }'
+    done
+fi
