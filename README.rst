@@ -75,3 +75,21 @@ datestring of ``yyyy.mm.dd``.  Currently this datestring is set manually in
 You can find your installed version by noting the version in the file path::
 
     python -c 'import guppi; print guppi.__file__'
+
+
+Developer Note
+==============
+
+It is possible to use ipython with the guppi interpreter. Change::
+
+    exec /usr/bin/env python -i -c 'from guppi.interpreter import *' $@
+
+in the ``guppi`` launch script (see ``scripts/guppi``) to::
+
+    exec /usr/bin/env ipython -i -c 'from guppi.interpreter import *' $@
+
+Note however that this breaks the tab completer as written.  A better approach
+would be to use Python's builtin code module and call ``code.interact(...)``.
+guppi saw first light with the ``python -i`` trick and we've kept it since.
+See Flask-Script (http://packages.python.org/Flask-Script/) for a simple
+example of how to use ``code.interact(...)`` with ipython option.
