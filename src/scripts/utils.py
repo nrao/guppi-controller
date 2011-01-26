@@ -114,7 +114,7 @@ def init2():
     # Set destination IPs/ports, currently gpu1-8
     for ip in range(8):
         verbose_set('BEE2/FPGA2/IP_%d' % ip, 
-                '%02x%02x%02x%02x' % (10.17.0,101+ip))
+                '%02x%02x%02x%02x' % (10,17,0,101+ip))
         verbose_set('BEE2/FPGA2/PT_%d' % ip, '%08x' % 50000)
 
 def reset(synth_freq=None, wait=3):
