@@ -10,7 +10,7 @@ doclines = __doc__.split("\n")
 
 setup(
     name        = 'guppi'
-  , version     = '2010.09.30' # TODO: need a means to automatically update.
+  , version     = '2011.01.26' # TODO: need a means to automatically update.
   , packages    = ['guppi', 'guppi.scripts']
   , package_dir = {'guppi' : 'src', 'guppi.scripts': 'src/scripts'}
   , scripts = ['scripts/guppi', 'scripts/guppi_server', 'scripts/run_guppi_server', 'scripts/run_guppi_server_gpu',
