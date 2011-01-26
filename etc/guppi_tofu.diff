@@ -166,8 +166,8 @@
      verbose_set('BEE2/FPGA2/SCALE_U', '01000000')
      verbose_set('BEE2/FPGA2/SCALE_V', '01000000')
      verbose_set('BEE2/FPGA2/ACC_LENGTH', '0000000f')
--    verbose_set('BEE2/FPGA2/DEST_IP', 'c0a80307')
-+    verbose_set('BEE2/FPGA2/DEST_IP', 'c0a8030a')
+-    verbose_set('BEE2/FPGA2/DEST_IP', '0a110007')
++    verbose_set('BEE2/FPGA2/DEST_IP', '0a11000a')
      verbose_set('BEE2/FPGA2/DEST_PORT', '0000c350')
      verbose_set('BEE2/FPGA2/DC_BINS_EN', '00000001')
      if mode == "1sfa":

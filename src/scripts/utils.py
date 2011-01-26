@@ -38,7 +38,7 @@ def init(mode="1sfa"):
     verbose_set('BEE2/FPGA2/SCALE_U', '01000000')
     verbose_set('BEE2/FPGA2/SCALE_V', '01000000')
     verbose_set('BEE2/FPGA2/ACC_LENGTH', '0000000f')
-    verbose_set('BEE2/FPGA2/DEST_IP', 'c0a80307')
+    verbose_set('BEE2/FPGA2/DEST_IP', '0a110007')
     verbose_set('BEE2/FPGA2/DEST_PORT', '0000c350')
     verbose_set('BEE2/FPGA2/DC_BINS_EN', '00000001')
     if mode == "1sfa":
@@ -52,8 +52,8 @@ def init(mode="1sfa"):
         verbose_set('BEE2/FPGA2/GUPPi_PIPES_BW_SEL', guppi_pipes_bw_sel)
         verbose_set('BEE2/FPGA2/BW_SEL', bw_sel)
         verbose_set('BEE2/FPGA2/ROL_SEL', '0')
-    text = 'begin\nmac = 10:10:10:10:10:11\nip = 192.168.3.8\n' + \
-           'gateway = 192.168.3.8\nport = 50000\nend\n'
+    text = 'begin\nmac = 10:10:10:10:10:11\nip = 10.17.0.8\n' + \
+           'gateway = 10.17.0.8\nport = 50000\nend\n'
     verbose_set('BEE2/FPGA2/ten_GbE', hexlify(text))
     print 'encoded from:\n%s' % text
 
@@ -103,8 +103,8 @@ def init2():
 
     # Set BEE2's 10gig IP addresses
     for ip in range(4):
-        text = ('begin\nmac = 10:10:10:10:10:%02x\nip = 192.168.3.%d\n' + \
-               'gateway = 192.168.3.7\nport = 50000\nend\n') % \
+        text = ('begin\nmac = 10:10:10:10:10:%02x\nip = 10.17.0.%d\n' + \
+               'gateway = 10.17.0.7\nport = 50000\nend\n') % \
                (16+ip, 20+ip)
         reg = 'BEE2/FPGA2/4_X_10Ge_10Ge_%d_ten_GbE' % ip
         print "Setting %s to:" % reg
@@ -114,7 +114,7 @@ def init2():
     # Set destination IPs/ports, currently gpu1-8
     for ip in range(8):
         verbose_set('BEE2/FPGA2/IP_%d' % ip, 
-                '%02x%02x%02x%02x' % (192,168,3,101+ip))
+                '%02x%02x%02x%02x' % (10.17.0,101+ip))
         verbose_set('BEE2/FPGA2/PT_%d' % ip, '%08x' % 50000)
 
 def reset(synth_freq=None, wait=3):
