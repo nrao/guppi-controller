@@ -231,6 +231,102 @@ else:
         pylab.plot(toplot)
         pylab.show()
 
+    def plot_4_chan_adc_hist(ngrab=1, refresh=True):
+        if get('BEE2/FPGA1/DESIGN_ID') != 'Error':
+            fix_count=True
+        else:
+            fix_count=False
+        d1h = numpy.ndarray(0, dtype=numpy.int8)
+        d3h = numpy.ndarray(0, dtype=numpy.int8)
+        d1l = numpy.ndarray(0, dtype=numpy.int8)
+        d3l = numpy.ndarray(0, dtype=numpy.int8)
+        for i in range(ngrab):
+            if refresh: dum=get()
+            fpgavals=[]
+            fpgalowvals=[]
+            fpgahighvals=[]
+            fpgavals = get_adc_samples(fpga=1,signed=True,fix_count=fix_count)
+            fpgalowvals = fpgavals[0:len(fpgavals)/2]
+            fpgahighvals = fpgavals[len(fpgavals)/2:len(fpgavals)] 
+            d1h = numpy.append(d1h, fpgahighvals)
+            d1l = numpy.append(d1l, fpgalowvals)
+
+            fpgavals = get_adc_samples(fpga=3,signed=True,fix_count=fix_count)
+            fpgalowvals = fpgavals[0:len(fpgavals)/2]
+            fpgahighvals = fpgavals[len(fpgavals)/2:len(fpgavals)] 
+            d3h = numpy.append(d3h,fpgahighvals)
+            d3l = numpy.append(d3l,fpgalowvals)
+
+        (h1h,x) = numpy.histogram(d1h,bins=128,range=(-128,128))
+        (h1l,x) = numpy.histogram(d1l,bins=128,range=(-128,128))
+        (h3h,x) = numpy.histogram(d3h,bins=128,range=(-128,128))
+        (h3l,x) = numpy.histogram(d3l,bins=128,range=(-128,128))
+        s1h = [d1h.mean(), d1h.std(), d1h.min(), d1h.max()]
+        s1l = [d1l.mean(), d1l.std(), d1l.min(), d1l.max()]
+        s3h = [d3h.mean(), d3h.std(), d3h.min(), d3h.max()]
+        s3l = [d3l.mean(), d3l.std(), d3l.min(), d3l.max()]
+        target_rms = 20.0
+
+        # Avoid the singularity.
+        s1h[1] = s1h[1] or 0.0000000000001
+        s3h[1] = s3h[1] or 0.0000000000001
+        s1l[1] = s1l[1] or 0.0000000000001
+        s3l[1] = s3l[1] or 0.0000000000001
+
+        s1h = tuple(s1h)
+        s3h = tuple(s3h)
+        s1l = tuple(s1l)
+        s3l = tuple(s3l)
+
+        diff1h = 20.0*(math.log10(s1h[1]) - math.log10(target_rms))
+        diff3h = 20.0*(math.log10(s3h[1]) - math.log10(target_rms))
+
+        diff1l = 20.0*(math.log10(s1l[1]) - math.log10(target_rms))
+        diff3l = 20.0*(math.log10(s3l[1]) - math.log10(target_rms))
+
+        if (diff1h < 0.0):
+            verb1h = 'Remove'
+            diff1h = -1.0 * diff1h
+        else:
+            verb1h = 'Add'
+        if (diff3h < 0.0):
+            verb3h = 'Remove'
+            diff3h = -1.0 * diff3h
+        else:
+            verb3h = 'Add'
+
+        print 'CM4 (FPGA3, main): Mean=%.3f RMS=%.3f Min=%d Max=%d' % s3h
+        print '       %s %.1f dB attenuation (for target RMS %.1f)' \
+                % (verb3h, diff3h, target_rms)
+        print 'CM8 (FPGA1,main ): Mean=%.3f RMS=%.3f Min=%d Max=%d' % s1h
+        print '       %s %.1f dB attenuation (for target RMS %.1f)' \
+                % (verb1h, diff1h, target_rms)
+
+        if (diff1l < 0.0):
+            verb1l = 'Remove'
+            diff1l = -1.0 * diff1l
+        else:
+            verb1l = 'Add'
+        if (diff3l < 0.0):
+            verb3l = 'Remove'
+            diff3l = -1.0 * diff3l
+        else:
+            verb3l = 'Add'
+        print 'RFI1 (FPGA3, aux): Mean=%.3f RMS=%.3f Min=%d Max=%d' % s3l
+        print '       %s %.1f dB attenuation (for target RMS %.1f)' \
+                % (verb3l, diff3l, target_rms)
+        print 'RFI2 (FPGA1, aux): Mean=%.3f RMS=%.3f Min=%d Max=%d' % s1l
+        print '       %s %.1f dB attenuation (for target RMS %.1f)' \
+                % (verb1l, diff1l, target_rms)
+
+        pylab.plot(x[1:]-0.5, h1h, label='FPGA1-main')
+        pylab.plot(x[1:]-0.5, h3h, label='FPGA3-main')
+        pylab.plot(x[1:]-0.5, h1l, label='FPGA1-aux')
+        pylab.plot(x[1:]-0.5, h3l, label='FPGA3-aux')
+        pylab.legend()
+        pylab.show()
+
+
     def plot_adc_hist(ngrab=1, refresh=True):
         if get('BEE2/FPGA1/DESIGN_ID') != 'Error':
             fix_count=True
