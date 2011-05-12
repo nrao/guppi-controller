@@ -12,13 +12,17 @@ guppi2_common_bofs = [
 
 # DSP bofs can be used in either coherent or incoherent modes
 guppi_dsp_bofs = {
+        '32': [
+            'BEE2/bGDSP_U1_0032_1248_P00_fpga1_2010_Jan_14_1431.bof',
+            'BEE2/bGDSP_U3_0032_1248_P00_fpga3_2010_Jan_14_1445.bof'
+            ],
         '64': [
             'BEE2/bGDSP_U1_0064_1248_P00_fpga1_2010_Jan_14_0928.bof',
             'BEE2/bGDSP_U3_0064_1248_P00_fpga3_2010_Jan_14_0942.bof'
             ],
         '128': [
-            'BEE2/bGDSP_U1_0128_1248_P02_fpga1_2009_Dec_31_2011.bof',
-            'BEE2/bGDSP_U3_0128_1248_P02_fpga3_2009_Dec_31_2011.bof'
+            'BEE2/bGDSP_U1_0128_T12_W095_fpga1_2010_Feb_16_1424.bof',
+            'BEE2/bGDSP_U3_0128_T12_W095_fpga3_2010_Feb_16_1517.bof'
             ],
         '256': [
             'BEE2/bGDSP_U1_0256_1248_P01_fpga1_2009_Dec_31_1522.bof',
@@ -54,6 +58,14 @@ guppi_modelist = {
             'BEE2/b2_GDSP_U1_4K_800_A_XA_fpga1_2008_Jul_30_1356.bof',
             'BEE2/b2_GDSP_U3_4K_800_A_XA_fpga3_2008_Jul_30_1414.bof'
             ],
+        '32': [
+            'BEE2/bGOUT_U2_0032_1SFA_P00_fpga2_2010_Feb_12_1237.bof',
+            guppi_xal_bof
+            ] + guppi_dsp_bofs['32'],
+        '64': [
+            'BEE2/bGOUT_U2_0064_1SFA_P00_fpga2_2010_Jan_14_1153.bof',
+            guppi_xal_bof
+            ] + guppi_dsp_bofs['64'],
         '128': [
             'BEE2/bGOUT_U2_0128_1SFA_P00_fpga2_2009_May_14_1515.bof',
             guppi_xal_bof,
@@ -96,6 +108,13 @@ guppi_modelist = {
             'BEE2/bGDSP_U1_4096_1248_P00_fpga1_2009_Jul_06_0847.bof', 
             'BEE2/bGDSP_U3_4096_1248_P00_fpga3_2009_Jul_06_0929.bof' 
             ],
+        'bbdump': [
+            'BEE2/bGDSP_U1_0001_1248_P00_fpga1_2010_May_25_1420.bof', 
+            'BEE2/bGDSP_U3_0001_1248_P00_fpga3_2010_May_25_1410.bof', 
+            'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_15_1455.bof', 
+            'BEE2/bGOUT_U2_1SFA_TDOM_P02_fpga2_2010_Jul_07_1724.bof'
+            ],
+        'c32':   guppi2_common_bofs + guppi_dsp_bofs['32'],
         'c64':   guppi2_common_bofs + guppi_dsp_bofs['64'],
         'c128':  guppi2_common_bofs + guppi_dsp_bofs['128'],
         'c256':  guppi2_common_bofs + guppi_dsp_bofs['256'],
