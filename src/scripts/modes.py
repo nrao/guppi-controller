@@ -6,39 +6,40 @@ guppi_xal_bof = 'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_15_1455.bof'
 
 # These bofs are common to all coherent modes
 guppi2_common_bofs = [
-        'BEE2/bGOUT_U2_1SFA_CoDD_P05_fpga2_2010_Feb_11_1123.bof',
+        'BEE2/bGOUT_U2_1SFA_CoDD_P10_fpga2_2010_Feb_24_1021.bof',
         guppi_xal_bof
         ]
 
 # DSP bofs can be used in either coherent or incoherent modes
+# NOTE: updated to match Guppi.conf 2011/06/29 PBD
 guppi_dsp_bofs = {
         '32': [
-            'BEE2/bGDSP_U1_0032_1248_P00_fpga1_2010_Jan_14_1431.bof',
-            'BEE2/bGDSP_U3_0032_1248_P00_fpga3_2010_Jan_14_1445.bof'
+            'BEE2/bGDSP_U1_0032_T12_W095_fpga1_2010_Aug_02_1026.bof',
+            'BEE2/bGDSP_U3_0032_T12_W095_fpga3_2010_Aug_02_1046.bof'
             ],
         '64': [
-            'BEE2/bGDSP_U1_0064_1248_P00_fpga1_2010_Jan_14_0928.bof',
-            'BEE2/bGDSP_U3_0064_1248_P00_fpga3_2010_Jan_14_0942.bof'
+            'BEE2/bGDSP_U1_0064_T12_W095_fpga1_2010_Aug_02_1200.bof',
+            'BEE2/bGDSP_U3_0064_T12_W095_fpga3_2010_Aug_02_1226.bof'
             ],
         '128': [
             'BEE2/bGDSP_U1_0128_T12_W095_fpga1_2010_Feb_16_1424.bof',
             'BEE2/bGDSP_U3_0128_T12_W095_fpga3_2010_Feb_16_1517.bof'
             ],
         '256': [
-            'BEE2/bGDSP_U1_0256_1248_P01_fpga1_2009_Dec_31_1522.bof',
-            'BEE2/bGDSP_U3_0256_1248_P01_fpga3_2009_Dec_31_1522.bof'
+            'BEE2/bGDSP_U1_0256_T12_W095_fpga1_2010_Aug_02_1327.bof',
+            'BEE2/bGDSP_U3_0256_T12_W095_fpga3_2010_Aug_02_1347.bof'
             ],
         '512': [
             'BEE2/bGDSP_U1_0512_1248_P01_fpga1_2009_Dec_31_1616.bof',
             'BEE2/bGDSP_U3_0512_1248_P01_fpga3_2009_Dec_31_1616.bof'
             ],
         '512_12T': [
-            'BEE2/bGDSP_U1_0512_T012_P01_fpga1_2010_Feb_02_1048.bof',
-            'BEE2/bGDSP_U3_0512_T012_P01_fpga3_2010_Feb_02_0857.bof'
+            'BEE2/bGDSP_U1_0512_T12_W095_fpga1_2010_Aug_02_1457.bof',
+            'BEE2/bGDSP_U3_0512_T12_W095_fpga3_2010_Aug_02_1518.bof'
             ],
         '1024': [
-            'BEE2/bGDSP_U1_1024_1248_P00_fpga1_2009_Jul_06_1330.bof',
-            'BEE2/bGDSP_U3_1024_1248_P00_fpga3_2009_Jul_06_1408.bof'
+            'BEE2/bGDSP_U1_1024_T12_W095_fpga1_2010_Aug_03_0953.bof',
+            'BEE2/bGDSP_U3_1024_T12_W095_fpga3_2010_Aug_03_1016.bof'
             ],
         '2048': [
             'BEE2/bGDSP_U1_2048_1248_P00_fpga1_2009_Jun_03_1645.bof',
