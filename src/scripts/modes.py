@@ -5,8 +5,9 @@ import sys
 guppi_xal_bof = 'BEE2/bGXAL_U4_XXXX_1SFA_P00_fpga4_2009_Jun_15_1455.bof'
 
 # These bofs are common to all coherent modes
+# NOTE: updated to non-ARP-spam versions 2013/02/04 PBD
 guppi2_common_bofs = [
-        'BEE2/bGOUT_U2_1SFA_CoDD_P10_fpga2_2010_Feb_24_1021.bof',
+        'BEE2/bGOUT_U2_1SFA_CoDD_P10_fpga2_2013_Jan_17_1600.bof',
         guppi_xal_bof
         ]
 
@@ -74,37 +75,37 @@ guppi_modelist = {
             'BEE2/bGDSP_U3_0128_1248_P00_fpga3_2009_Dec_17_1303.bof'
             ],
         '256': [
-            'BEE2/bGOUT_U2_0256_1SFA_P00_fpga2_2009_Jul_07_0843.bof',
+            'BEE2/bGOUT_U2_0256_1SFA_P00_fpga2_2013_Jan_18_0837.bof',
             guppi_xal_bof,
             'BEE2/bGDSP_U1_0256_1248_P00_fpga1_2009_Jul_07_1057.bof',
             'BEE2/bGDSP_U3_0256_1248_P00_fpga3_2009_Jul_07_1129.bof'
             ],
         '512': [
-            'BEE2/bGOUT_U2_0512_1SFA_P00_fpga2_2009_Jul_06_1540.bof',
+            'BEE2/bGOUT_U2_0512_1SFA_P00_fpga2_2013_Jan_18_0840.bof',
             guppi_xal_bof,
             'BEE2/bGDSP_U1_0512_1248_P00_fpga1_2009_Jul_07_0710.bof',
             'BEE2/bGDSP_U3_0512_1248_P00_fpga3_2009_Jul_07_0746.bof'
             ],
         '1024': [
-            'BEE2/bGOUT_U2_1024_1SFA_P00_fpga2_2009_Jul_06_1118.bof',
+            'BEE2/bGOUT_U2_1024_1SFA_P00_fpga2_2013_Jan_18_0853.bof',
             guppi_xal_bof,
             'BEE2/bGDSP_U1_1024_1248_P00_fpga1_2009_Jul_06_1330.bof',
             'BEE2/bGDSP_U3_1024_1248_P00_fpga3_2009_Jul_06_1408.bof'
             ],
         '2048': [
-            'BEE2/bGOUT_U2_2048_1SFA_P00_fpga2_2009_Jun_04_1032.bof',
+            'BEE2/bGOUT_U2_2048_1SFA_P00_fpga2_2013_Jan_18_0905.bof',
             guppi_xal_bof,
             'BEE2/bGDSP_U1_2048_1248_P00_fpga1_2009_Jun_03_1645.bof',
             'BEE2/bGDSP_U3_2048_1248_P00_fpga3_2009_Jun_03_1725.bof'
             ],
         '4096': [
-            'BEE2/bGOUT_U2_4096_1SFA_P00_fpga2_2009_Jul_14_0927.bof',
+            'BEE2/bGOUT_U2_4096_1SFA_P00_fpga2_2013_Jan_18_0908.bof',
             guppi_xal_bof,
             'BEE2/bGDSP_U1_4096_1248_P00_fpga1_2009_Jul_06_0847.bof',
             'BEE2/bGDSP_U3_4096_1248_P00_fpga3_2009_Jul_06_0929.bof'
             ],
         'fast4k': [
-            'BEE2/bGOUT_U2_4096_1SFA_P01_fpga2_2009_Sep_03_1003.bof',
+            'BEE2/bGOUT_U2_4096_1SFA_P01_fpga2_2013_Jan_18_0824.bof',
             guppi_xal_bof,
             'BEE2/bGDSP_U1_4096_1248_P00_fpga1_2009_Jul_06_0847.bof', 
             'BEE2/bGDSP_U3_4096_1248_P00_fpga3_2009_Jul_06_0929.bof' 
